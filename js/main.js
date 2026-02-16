@@ -112,7 +112,7 @@
     const username = GITHUB_USERNAME;
     const fallback = document.getElementById('calendar-fallback');
 
-    if (username === 'YOUR_GITHUB_USERNAME') {
+    if (username === 'josephjuma24') {
       if (fallback) fallback.innerHTML = `
         <i class="fab fa-github"></i>
         <span style="color: var(--amber)">📌 Setup Required</span>
@@ -150,7 +150,7 @@
     const grid = document.getElementById('repos-grid');
     const username = GITHUB_USERNAME;
 
-    if (username === 'YOUR_GITHUB_USERNAME') {
+    if (username === 'josephjuma24') {
       grid.innerHTML = `
         <div class="repo-loading">
           <i class="fas fa-info-circle" style="color: var(--amber); margin-right: 0.5rem;"></i>

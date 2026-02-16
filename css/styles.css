@@ -2,27 +2,28 @@
        DESIGN SYSTEM
     ============================================ */
     :root {
-      --navy: #0a1628;
-      --navy-mid: #112240;
-      --navy-light: #1a3460;
-      --teal: #00bfae;
-      --teal-dim: #00877a;
-      --amber: #f5a623;
-      --amber-dim: #c2811a;
-      --cream: #f4efe6;
-      --cream-dim: #e8e0d0;
-      --white: #ffffff;
-      --text-primary: #e8edf5;
-      --text-secondary: #94a3b8;
-      --text-muted: #5a7090;
-      --border: rgba(0, 191, 174, 0.15);
-      --card-bg: rgba(17, 34, 64, 0.7);
+      /* Light theme — blended, soft tones */
+      --navy: #f4f7fb; /* page background (light) */
+      --navy-mid: #e9eff6; /* panels / cards background */
+      --navy-light: #e0eaf6; /* subtle accents */
+      --teal: #0b8f82; /* primary accent */
+      --teal-dim: #087061; /* dimmer teal for thumbs/borders */
+      --amber: #ffb25a; /* warm highlight */
+      --amber-dim: #c27a2a;
+      --cream: #ffffff; /* card/content background */
+      --cream-dim: #f6f7fa;
+      --white: #0b1a2b; /* primary text (formerly white) — now dark */
+      --text-primary: #102831; /* body text */
+      --text-secondary: #48626f; /* secondary text */
+      --text-muted: #6b7b88; /* muted text */
+      --border: rgba(11, 143, 130, 0.12);
+      --card-bg: rgba(255, 255, 255, 0.85);
       --font-display: 'Syne', sans-serif;
       --font-body: 'DM Sans', sans-serif;
       --font-mono: 'DM Mono', monospace;
       --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      --shadow-teal: 0 0 40px rgba(0, 191, 174, 0.12);
-      --shadow-card: 0 4px 30px rgba(0, 0, 0, 0.4);
+      --shadow-teal: 0 0 30px rgba(11, 143, 130, 0.08);
+      --shadow-card: 0 6px 20px rgba(16, 24, 40, 0.06);
     }
 
     /* ============================================
@@ -97,17 +98,18 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(10, 22, 40, 0.85);
-      backdrop-filter: blur(20px);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
       transition: var(--transition);
+      color: var(--text-primary);
     }
 
     .nav-logo {
       font-family: var(--font-display);
       font-weight: 800;
       font-size: 1.1rem;
-      color: var(--white);
+      color: var(--text-primary);
       letter-spacing: -0.02em;
     }
 
@@ -123,7 +125,7 @@
     .nav-links a {
       font-family: var(--font-mono);
       font-size: 0.75rem;
-      color: var(--text-secondary);
+      color: var(--text-primary);
       padding: 0.4rem 0.75rem;
       border-radius: 4px;
       letter-spacing: 0.05em;
@@ -177,8 +179,8 @@
         top: 68px;
         left: 0;
         right: 0;
-        background: rgba(10, 22, 40, 0.97);
-        backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.97);
+        backdrop-filter: blur(12px);
         flex-direction: column;
         padding: 1.5rem;
         border-bottom: 1px solid var(--border);
@@ -200,6 +202,61 @@
     .section-inner {
       max-width: 1100px;
       margin: 0 auto;
+      padding: 0 2rem;
+    }
+    /* Make the about section use a wider, fluid inner container */
+    #about .section-inner {
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* Ensure any reveal/visible container that also acts as a section-inner
+       inside #about uses the same fluid constraints and aligns with the
+       about body padding */
+    #about .reveal.visible.section-inner,
+    #about .section-inner.reveal.visible,
+    #about .reveal.visible .section-inner {
+      max-width: 1600px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 2rem;
+    }
+
+    /* Make the experience section use the same wider, fluid inner container
+       and align it with the about body padding/margins */
+    #experience .section-inner {
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    #experience .reveal.visible.section-inner,
+    #experience .section-inner.reveal.visible,
+    #experience .reveal.visible .section-inner {
+      max-width: 1600px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 2rem;
+    }
+
+    /* Make the projects section use the same wider, fluid inner container
+       and align it with the about body padding/margins */
+    #projects .section-inner {
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    #projects .reveal.visible.section-inner,
+    #projects .section-inner.reveal.visible,
+    #projects .reveal.visible .section-inner {
+      max-width: 1600px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
       padding: 0 2rem;
     }
 
@@ -245,10 +302,10 @@
        HERO SECTION
     ============================================ */
     #home {
-      min-height: 100vh;
+      min-height: 50vh;
       display: flex;
       align-items: center;
-      padding-top: 68px;
+      padding-top: 28px;
       position: relative;
       overflow: hidden;
     }
@@ -266,16 +323,17 @@
     }
 
     .hero-inner {
-      max-width: 1100px;
+      width: 100%;
+      max-width: 1600px;
       margin: 0 auto;
-      padding: 5rem 2rem;
+      padding: clamp(3rem, 8vw, 5rem) clamp(1.25rem, 5vw, 3rem);
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 4rem;
+      gap: clamp(2rem, 6vw, 4rem);
       align-items: center;
     }
 
-    .hero-content { max-width: 620px; }
+    .hero-content { width: 100%; max-width: 1600px; text-align: justify; }
 
     .hero-greeting {
       font-family: var(--font-mono);
@@ -284,18 +342,21 @@
       margin-bottom: 1rem;
       opacity: 0;
       animation: fadeUp 0.6s ease 0.2s forwards;
+      text-align: justify;
     }
 
     .hero-name {
-      font-family: var(--font-display);
+      font-family: 'Times New Roman', serif;
       font-weight: 800;
-      font-size: clamp(2.8rem, 7vw, 5rem);
+      font-size: clamp(1.8rem, 5.2vw, 3.2rem);
       color: var(--white);
       line-height: 1.05;
       letter-spacing: -0.03em;
       margin-bottom: 0.5rem;
       opacity: 0;
       animation: fadeUp 0.6s ease 0.4s forwards;
+      text-align: left;
+      white-space: nowrap;
     }
 
     .hero-title {
@@ -306,6 +367,7 @@
       margin-bottom: 1.5rem;
       opacity: 0;
       animation: fadeUp 0.6s ease 0.6s forwards;
+      text-align: justify;
     }
 
     .hero-title .accent { color: var(--amber); }
@@ -314,10 +376,11 @@
       font-size: 1rem;
       color: var(--text-secondary);
       line-height: 1.8;
-      max-width: 520px;
+      max-width: 100%;
       margin-bottom: 2.5rem;
       opacity: 0;
       animation: fadeUp 0.6s ease 0.8s forwards;
+      text-align: justify;
     }
 
     .hero-tags {
@@ -365,14 +428,14 @@
 
     .btn-primary {
       background: var(--teal);
-      color: var(--navy);
+      color: var(--cream);
     }
 
     .btn-primary:hover {
-      background: var(--white);
-      color: var(--navy);
+      background: var(--teal-dim);
+      color: var(--cream);
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 191, 174, 0.3);
+      box-shadow: var(--shadow-teal);
     }
 
     .btn-outline {
@@ -382,8 +445,9 @@
     }
 
     .btn-outline:hover {
-      background: rgba(0, 191, 174, 0.08);
+      background: rgba(11, 143, 130, 0.06);
       transform: translateY(-2px);
+      color: var(--cream);
     }
 
     .btn-ghost {
@@ -393,8 +457,9 @@
     }
 
     .btn-ghost:hover {
-      color: var(--white);
-      border-color: var(--text-secondary);
+      color: var(--text-primary);
+      border-color: rgba(11,143,130,0.12);
+      background: rgba(11,143,130,0.04);
       transform: translateY(-2px);
     }
 
@@ -422,11 +487,12 @@
       position: relative;
       overflow: hidden;
       box-shadow: 0 0 0 8px rgba(0, 191, 174, 0.08), var(--shadow-card);
+      flex-shrink: 0;
     }
 
     .hero-avatar img {
-      width: 100%;
-      height: 100%;
+      width: 220px;
+      height: 220px;
       object-fit: cover;
       border-radius: 50%;
     }
@@ -483,7 +549,7 @@
        ABOUT SECTION
     ============================================ */
     #about {
-      padding: 6rem 0;
+      padding: 1rem 0;
     }
 
     .about-grid {
@@ -491,6 +557,10 @@
       grid-template-columns: 1.2fr 0.8fr;
       gap: 5rem;
       align-items: start;
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 0 2rem;
     }
 
     .about-text p {
@@ -566,7 +636,7 @@
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      background: rgba(17, 34, 64, 0.8);
+      background: var(--card-bg);
       border: 1px solid var(--border);
       color: var(--text-secondary);
       font-family: var(--font-mono);
@@ -588,8 +658,8 @@
        EXPERIENCE SECTION
     ============================================ */
     #experience {
-      padding: 6rem 0;
-      background: linear-gradient(180deg, transparent 0%, rgba(17, 34, 64, 0.4) 50%, transparent 100%);
+      padding: 1rem 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(16, 24, 40, 0.06) 50%, transparent 100%);
     }
 
     .timeline {
@@ -771,7 +841,7 @@
        PROJECTS SECTION
     ============================================ */
     #projects {
-      padding: 6rem 0;
+      padding: 1rem 0;
     }
 
     .projects-grid {
@@ -865,13 +935,31 @@
 
     .project-link:hover { color: var(--teal); }
 
+    /* Make the github section use the same wider, fluid inner container
+       and align it with the about body padding/margins */
+    #github .section-inner {
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    #github .reveal.visible.section-inner,
+    #github .section-inner.reveal.visible,
+    #github .reveal.visible .section-inner {
+      max-width: 1600px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 2rem;
+    }
+
     /* Project Modal */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(5, 12, 25, 0.88);
-      backdrop-filter: blur(8px);
+      background: rgba(16, 24, 40, 0.06);
+      backdrop-filter: blur(6px);
       z-index: 2000;
       align-items: center;
       justify-content: center;
@@ -881,7 +969,7 @@
     .modal-overlay.active { display: flex; }
 
     .modal {
-      background: var(--navy-mid);
+      background: var(--cream);
       border: 1px solid var(--border);
       border-radius: 16px;
       max-width: 680px;
@@ -889,6 +977,8 @@
       max-height: 85vh;
       overflow-y: auto;
       position: relative;
+      color: var(--text-primary);
+      box-shadow: var(--shadow-card);
     }
 
     .modal-header {
@@ -963,8 +1053,8 @@
        GITHUB ACTIVITY SECTION
     ============================================ */
     #github {
-      padding: 6rem 0;
-      background: linear-gradient(180deg, transparent, rgba(17, 34, 64, 0.3), transparent);
+      padding: 1rem 0;
+      background: linear-gradient(180deg, transparent, rgba(16, 24, 40, 0.06), transparent);
     }
 
     .github-grid {
@@ -990,7 +1080,7 @@
       gap: 1rem;
     }
 
-    .github-username-badge {
+    .github-josephjuma24-badge {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
@@ -1118,14 +1208,44 @@
        EDUCATION & CERTIFICATIONS
     ============================================ */
     #education {
-      padding: 6rem 0;
+      padding: 1rem 0;
+    }
+
+    /* Make the education section use the same wider, fluid inner container
+       and align it with the about body padding/margins */
+    #education .section-inner {
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    #education .reveal.visible.section-inner,
+    #education .section-inner.reveal.visible,
+    #education .reveal.visible .section-inner {
+      max-width: 1600px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 2rem;
     }
 
     .edu-certs-grid {
-      display: grid;
-      grid-template-columns: 1fr 1.4fr;
-      gap: 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
     }
+
+    .edu-section,
+    .languages-section,
+    .certs-section,
+    .refs-section {
+      width: 100%;
+    }
+
+    /* Add clear spacing before major subsections */
+    .edu-section { padding-top: 1rem; }
+    .certs-section { padding-top: 3rem; }
+    .refs-section { padding-top: 3rem; }
 
     .edu-card {
       background: var(--card-bg);
@@ -1166,7 +1286,7 @@
     }
 
     .cert-card {
-      background: rgba(17, 34, 64, 0.6);
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 1rem;
@@ -1174,8 +1294,8 @@
     }
 
     .cert-card:hover {
-      border-color: rgba(0, 191, 174, 0.3);
-      background: rgba(17, 34, 64, 0.9);
+      border-color: rgba(11,143,130,0.18);
+      background: var(--navy-mid);
     }
 
     .cert-name {
@@ -1212,17 +1332,85 @@
       border-radius: 8px;
       padding: 0.75rem 1.25rem;
       text-align: center;
+      min-width: 160px;
     }
 
-    .lang-name { font-weight: 600; color: var(--white); font-size: 0.9rem; }
-    .lang-level { font-family: var(--font-mono); font-size: 0.65rem; color: var(--teal); }
+    .lang-name {
+      font-weight: 600;
+      color: var(--white);
+      font-size: 0.9rem;
+      margin-bottom: 0.45rem;
+    }
+
+    /* Level with progressive bar
+       Set the level via inline CSS on the badge or level container:
+       <div class="lang-level" style="--lang-level: 85%"></div>
+       default is 60% if not provided */
+    .lang-level {
+      /* allow authors to control fill width via --lang-level */
+      --lang-level: 60%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      align-items: stretch;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--teal);
+    }
+
+    /* optional tiny label row (e.g. "Advanced 85%") */
+    .lang-level-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 0.65rem;
+    }
+
+    /* bar track */
+    .lang-level-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(11, 143, 130, 0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(11, 143, 130, 0.04);
+    }
+
+    /* fill uses theme tones and animates width */
+    .lang-level-fill {
+      width: var(--lang-level);
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal), var(--teal-dim));
+      border-radius: 999px;
+      box-shadow: 0 6px 18px rgba(11, 143, 130, 0.06);
+      transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
 
     /* ============================================
        CONTACT SECTION
     ============================================ */
     #contact {
-      padding: 6rem 0;
+      padding: 1rem 0;
       background: linear-gradient(180deg, transparent, rgba(17, 34, 64, 0.5));
+    }
+
+    /* Make the contact section use the same wider, fluid inner container
+       and align it with the about body padding/margins */
+    #contact .section-inner {
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    #contact .reveal.visible.section-inner,
+    #contact .section-inner.reveal.visible,
+    #contact .reveal.visible .section-inner {
+      max-width: 1600px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 2rem;
     }
 
     .contact-grid {
@@ -1327,7 +1515,7 @@
 
     .form-group input,
     .form-group textarea {
-      background: rgba(17, 34, 64, 0.8);
+      background: rgba(255, 255, 255, 0.95);
       border: 1px solid var(--border);
       border-radius: 6px;
       padding: 0.75rem 1rem;
@@ -1342,7 +1530,8 @@
     .form-group textarea:focus {
       outline: none;
       border-color: var(--teal);
-      background: rgba(17, 34, 64, 0.95);
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 18px rgba(11,143,130,0.06);
     }
 
     .form-group input::placeholder,
@@ -1431,7 +1620,6 @@
       .hero-visual { order: -1; align-items: flex-start; flex-direction: row; }
       .hero-avatar { width: 140px; height: 140px; }
       .about-grid { grid-template-columns: 1fr; gap: 3rem; }
-      .edu-certs-grid { grid-template-columns: 1fr; gap: 3rem; }
       .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
     }
 
