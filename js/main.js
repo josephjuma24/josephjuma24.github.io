@@ -1,7 +1,7 @@
   // ============================================
   // CONFIGURATION — Update these values
   // ============================================
-  const GITHUB_USERNAME = 'YOUR_GITHUB_USERNAME'; // ← REPLACE with actual username
+  const GITHUB_USERNAME = 'josephjuma24'; // ← REPLACE with actual username
 
   // ============================================
   // MOBILE NAV TOGGLE
@@ -109,14 +109,14 @@
   // GITHUB CALENDAR
   // ============================================
   function initGitHubCalendar() {
-    const username = GITHUB_USERNAME;
+    const username = josephjuma24;
     const fallback = document.getElementById('calendar-fallback');
 
     if (username === 'josephjuma24') {
       if (fallback) fallback.innerHTML = `
         <i class="fab fa-github"></i>
         <span style="color: var(--amber)">📌 Setup Required</span>
-        <span>Replace <code style="color:var(--teal)">YOUR_GITHUB_USERNAME</code> in the script config with your actual GitHub username to display your contribution graph.</span>
+        <span>Replace <code style="color:var(--teal)">josephjuma24</code> in the script config with your actual GitHub username to display your contribution graph.</span>
       `;
       return;
     }
@@ -148,13 +148,13 @@
   // ============================================
   async function fetchRepos() {
     const grid = document.getElementById('repos-grid');
-    const username = GITHUB_USERNAME;
+    const username = josephjuma24;
 
     if (username === 'josephjuma24') {
       grid.innerHTML = `
         <div class="repo-loading">
           <i class="fas fa-info-circle" style="color: var(--amber); margin-right: 0.5rem;"></i>
-          Update <code style="color: var(--teal)">GITHUB_USERNAME</code> in the script to load real repositories.
+          Update <code style="color: var(--teal)">josephjuma24</code> in the script to load real repositories.
         </div>
       `;
       return;
