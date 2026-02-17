@@ -1,7 +1,7 @@
   // ============================================
   // CONFIGURATION — Update these values
   // ============================================
-  const GITHUB_USERNAME = 'josephjuma24'; // ← REPLACE with actual username
+  const GITHUB_USERNAME = 'josephjuma24'; // ← REPLACE with actual username josephjuma24
 
   // ============================================
   // MOBILE NAV TOGGLE
@@ -109,7 +109,7 @@
   // GITHUB CALENDAR
   // ============================================
   function initGitHubCalendar() {
-    const username = josephjuma24;
+    const username = GITHUB_USERNAME;
     const fallback = document.getElementById('calendar-fallback');
 
     if (username === 'josephjuma24') {
@@ -148,7 +148,7 @@
   // ============================================
   async function fetchRepos() {
     const grid = document.getElementById('repos-grid');
-    const username = josephjuma24;
+    const username = GITHUB_USERNAME;
 
     if (username === 'josephjuma24') {
       grid.innerHTML = `
