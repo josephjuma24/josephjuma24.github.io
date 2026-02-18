@@ -18,8 +18,9 @@
       --text-muted: #6b7b88; /* muted text */
       --border: rgba(11, 143, 130, 0.12);
       --card-bg: rgba(255, 255, 255, 0.85);
-      --font-display: 'Syne', sans-serif;
-      --font-body: 'DM Sans', sans-serif;
+      /* Typography: favor a larger Times New Roman system stack for a modern editorial feel */
+      --font-display: 'Times New Roman', Times, serif;
+      --font-body: 'Times New Roman', Times, serif;
       --font-mono: 'DM Mono', monospace;
       --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       --shadow-teal: 0 0 30px rgba(11, 143, 130, 0.08);
@@ -33,14 +34,14 @@
 
     html {
       scroll-behavior: smooth;
-      font-size: 16px;
+      font-size: 17px; /* slightly larger base for better readability */
     }
 
     body {
       font-family: var(--font-body);
       background-color: var(--navy);
       color: var(--text-primary);
-      line-height: 1.7;
+      line-height: 1.8;
       overflow-x: hidden;
     }
 
@@ -281,11 +282,11 @@
 
     .section-title {
       font-family: var(--font-display);
-      font-weight: 700;
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      font-size: clamp(2.2rem, 4.6vw, 3.6rem);
       color: var(--white);
-      line-height: 1.2;
-      letter-spacing: -0.02em;
+      line-height: 1.15;
+      letter-spacing: -0.035em;
     }
 
     .section-title span { color: var(--teal); }
@@ -346,23 +347,22 @@
     }
 
     .hero-name {
-      font-family: 'Times New Roman', serif;
-      font-weight: 800;
-      font-size: clamp(1.8rem, 5.2vw, 3.2rem);
+      font-family: 'Times New Roman', Times, serif;
+      font-weight: 900;
+      font-size: clamp(2.8rem, 6.2vw, 4.1rem);
       color: var(--white);
       line-height: 1.05;
-      letter-spacing: -0.03em;
-      margin-bottom: 0.5rem;
+      letter-spacing: -0.045em;
+      margin-bottom: 0.9rem;
       opacity: 0;
       animation: fadeUp 0.6s ease 0.4s forwards;
       text-align: left;
-      white-space: nowrap;
     }
 
     .hero-title {
       font-family: var(--font-display);
-      font-weight: 500;
-      font-size: clamp(1.1rem, 3vw, 1.6rem);
+      font-weight: 600;
+      font-size: clamp(1.25rem, 3.2vw, 1.8rem);
       color: var(--text-secondary);
       margin-bottom: 1.5rem;
       opacity: 0;
@@ -373,7 +373,7 @@
     .hero-title .accent { color: var(--amber); }
 
     .hero-tagline {
-      font-size: 1rem;
+      font-size: 1.05rem;
       color: var(--text-secondary);
       line-height: 1.8;
       max-width: 100%;
@@ -565,9 +565,9 @@
 
     .about-text p {
       color: var(--text-secondary);
-      font-size: 1rem;
+      font-size: 1.05rem;
       line-height: 1.9;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.4rem;
     }
 
     .about-text p strong { color: var(--text-primary); }
@@ -722,8 +722,9 @@
     .exp-role {
       font-family: var(--font-display);
       font-weight: 700;
-      font-size: 1.15rem;
+      font-size: 1.25rem;
       color: var(--white);
+      letter-spacing: -0.02em;
     }
 
     .exp-period {
@@ -885,12 +886,13 @@
     .project-title {
       font-family: var(--font-display);
       font-weight: 700;
-      font-size: 1.05rem;
+      font-size: 1.25rem;
       color: var(--white);
+      letter-spacing: -0.02em;
     }
 
     .project-desc {
-      font-size: 0.88rem;
+      font-size: 0.95rem;
       color: var(--text-secondary);
       line-height: 1.7;
       flex: 1;
@@ -1080,19 +1082,18 @@
       gap: 1rem;
     }
 
-    .github-josephjuma24-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      color: var(--teal);
-      background: rgba(0, 191, 174, 0.06);
-      border: 1px solid rgba(0, 191, 174, 0.2);
-      padding: 0.35rem 0.9rem;
-      border-radius: 100px;
-    }
-
+    .github-username-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        color: var(--teal);
+        background: rgba(0, 191, 174, 0.06);
+        border: 1px solid rgba(0, 191, 174, 0.2);
+        padding: 0.35rem 0.9rem;
+        border-radius: 100px;
+      }
     /* Override calendar styles for dark theme */
     .calendar {
       overflow-x: auto;
@@ -1116,7 +1117,7 @@
     .github-repos-title {
       font-family: var(--font-display);
       font-weight: 600;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       color: var(--white);
       margin-bottom: 1.5rem;
       display: flex;
@@ -1261,7 +1262,7 @@
     .edu-degree {
       font-family: var(--font-display);
       font-weight: 600;
-      font-size: 1rem;
+      font-size: 1.05rem;
       color: var(--white);
       margin-bottom: 0.35rem;
     }
@@ -1454,7 +1455,7 @@
     }
 
     .contact-info-value {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: var(--text-primary);
     }
 
