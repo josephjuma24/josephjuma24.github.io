@@ -1,5 +1,5 @@
 /* ============================================================
-   PORTFOLIO — DR. ALEX MORGAN | AI Researcher & DevOps Engineer
+   PORTFOLIO — Joseph Juma | AI Researcher & DevOps Engineer
    Design System: Editorial / Refined-Scientific Light Theme
    Fonts: Playfair Display (display) + DM Sans (body)
    Max-width: 1400px fluid & responsive
@@ -239,16 +239,16 @@ button, input, textarea, select { font: inherit; }
 }
 
 /* ── PAGE WRAPPER ──────────────────────────────────────────── */
-.page-wrapper { padding-top: 68px; min-height: 100vh; }
+.page-wrapper { padding-top: 68px; min-height: 50vh; }
 
 /* ── HERO (index.html) ─────────────────────────────────────── */
 .hero {
-  padding: var(--sp-4) 0 var(--sp-16);
+  padding: 0 0 var(--sp-16);
   position: relative;
   overflow: hidden;
 }
 .hero-introduction {
-  min-height: calc(100vh - 68px);
+  min-height: calc(10vh - 68px);
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--sp-8);
@@ -417,8 +417,10 @@ button, input, textarea, select { font: inherit; }
   background: var(--clr-surface);
   border-top: 1px solid var(--clr-border);
   border-bottom: 1px solid var(--clr-border);
-  padding: var(--sp-8) 0;
+  padding: var(--sp-14) 0 var(--sp-14);
   overflow: hidden;
+  display: flex;
+  align-items: center;
 }
 .competencies-inner { display: flex; align-items: center; gap: var(--sp-12); }
 .comp-label {
