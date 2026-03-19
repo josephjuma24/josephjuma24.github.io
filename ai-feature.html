@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI on Kenyan Smartphones — Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #2a2a2a;
+    --white: #f0eeeb;
+    --accent: #3a6b3f;
+    --accent2: #c0392b;
+    --mid: #e8e5e0;
+    --muted: #8a8580;
+    --border: rgba(60,55,50,0.13);
+    --card-bg: #f7f5f2;
+    --body-bg: #ececea;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--body-bg);
+    color: var(--black);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    padding: 3rem 3rem 3rem 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid var(--border);
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Animated radial background in hero-right */
+  .hero-right::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 80% at 60% 50%, #d6e8d8 0%, transparent 70%),
+                radial-gradient(ellipse 40% 50% at 20% 80%, #dde3d6 0%, transparent 60%);
+    animation: pulse 6s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulse {
+    from { opacity: 0.8; transform: scale(1); }
+    to   { opacity: 1;   transform: scale(1.05); }
+  }
+
+  .hero-grid-lines {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 1;
+  }
+
+  .big-stat {
+    position: relative; z-index: 2;
+    text-align: center;
+  }
+
+  .big-stat .number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(7rem, 16vw, 13rem);
+    color: var(--accent);
+    line-height: 0.85;
+    letter-spacing: -2px;
+    text-shadow: 0 0 80px rgba(58,107,63,0.15);
+  }
+
+  .big-stat .label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: rgba(42,42,42,0.45);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(58,107,63,0.1);
+    border: 1px solid rgba(58,107,63,0.3);
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.8rem;
+    border-radius: 2px;
+    margin-bottom: 2rem;
+    width: fit-content;
+  }
+
+  .badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: blink 1.4s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.2; }
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 7vw, 6rem);
+    line-height: 0.92;
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-title em {
+    font-style: normal;
+    color: var(--accent);
+    display: block;
+  }
+
+  .hero-sub {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: rgba(42,42,42,0.6);
+    max-width: 380px;
+    margin-bottom: 2.5rem;
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .meta-item .mlabel {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+  }
+
+  .meta-item .mvalue {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--black);
+  }
+
+  /* ── SCROLL INDICATOR ── */
+  .scroll-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+  }
+
+  .scroll-line {
+    width: 40px; height: 1px;
+    background: var(--muted);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scroll-line::after {
+    content: '';
+    position: absolute; top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: var(--accent);
+    animation: slide 2s ease-in-out infinite;
+  }
+
+  @keyframes slide {
+    0%   { left: -100%; }
+    100% { left: 100%; }
+  }
+
+  /* ── SECTION COMMONS ── */
+  section { padding: 5rem 4rem; }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .section-label::before {
+    content: '';
+    display: inline-block;
+    width: 20px; height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 0.95;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── OVERVIEW STRIP ── */
+  .overview {
+    background: #e2e0dc;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+  }
+
+  .overview-inner {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .stat-block {
+    padding: 3rem 2.5rem;
+    border-right: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  .stat-block:last-child { border-right: none; }
+
+  .stat-block:hover { background: rgba(58,107,63,0.06); }
+
+  .stat-block .snum {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    color: var(--accent);
+    line-height: 1;
+    display: block;
+  }
+
+  .stat-block .sdesc {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: rgba(42,42,42,0.55);
+    margin-top: 0.4rem;
+    max-width: 180px;
+  }
+
+  /* ── MARKET SECTION ── */
+  .market { border-bottom: 1px solid var(--border); }
+
+  .market-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 4rem;
+    margin-top: 3rem;
+  }
+
+  .market-intro {
+    color: rgba(42,42,42,0.7);
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+
+  .market-intro strong {
+    color: var(--black);
+    font-weight: 700;
+  }
+
+  /* Brand bars */
+  .brands { display: flex; flex-direction: column; gap: 1rem; }
+
+  .brand-row { display: flex; flex-direction: column; gap: 0.4rem; }
+
+  .brand-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.85rem;
+  }
+
+  .brand-name { font-weight: 700; }
+
+  .brand-pct {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent);
+  }
+
+  .bar-track {
+    height: 4px;
+    background: rgba(42,42,42,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: fillBar 1.2s ease forwards;
+  }
+
+  @keyframes fillBar {
+    to { transform: scaleX(1); }
+  }
+
+  /* ── DEMOGRAPHICS ── */
+  .demographics {
+    background: #e8e6e2;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .demo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+    margin-top: 3rem;
+    background: var(--border);
+  }
+
+  .demo-card {
+    background: var(--card-bg);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+
+  .demo-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .demo-card:hover::after { transform: scaleX(1); }
+
+  .demo-age {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .demo-share {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin: 0.3rem 0 0.8rem;
+  }
+
+  .demo-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .demo-desc {
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: rgba(42,42,42,0.55);
+  }
+
+  .demo-features {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .chip {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid rgba(42,42,42,0.18);
+    border-radius: 2px;
+    color: rgba(42,42,42,0.5);
+  }
+
+  /* ── BRANDS SECTION ── */
+  .brands-section { border-bottom: 1px solid var(--border); }
+
+  .brand-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .brand-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .brand-card:hover { border-color: rgba(58,107,63,0.4); }
+
+  .brand-card .bc-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .brand-card .bc-share {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+
+  .brand-card .bc-tag {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .brand-card .bc-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .brand-card .bc-features li {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: rgba(42,42,42,0.6);
+    padding-left: 1rem;
+    position: relative;
+  }
+
+  .brand-card .bc-features li::before {
+    content: '→';
+    position: absolute; left: 0;
+    color: var(--accent);
+    font-size: 0.7rem;
+  }
+
+  /* ── USAGE SCENARIOS ── */
+  .scenarios {
+    background: #e2e0dc;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .scenarios-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    margin-top: 3rem;
+    background: var(--border);
+  }
+
+  .scenario-block {
+    background: #e2e0dc;
+    padding: 2rem;
+    transition: background 0.3s;
+  }
+
+  .scenario-block:hover { background: #d8d5d0; }
+
+  .scenario-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    display: block;
+    filter: grayscale(0.3);
+  }
+
+  .scenario-name {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .scenario-desc {
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: rgba(42,42,42,0.55);
+  }
+
+  /* ── HIGHLIGHT QUOTE ── */
+  .quote-section {
+    padding: 6rem 4rem;
+    background: #2d4a30;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .quote-section::before {
+    content: '"';
+    position: absolute;
+    top: -1rem; left: 3rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20rem;
+    color: rgba(255,255,255,0.06);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .quote-text {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: #e8f5e9;
+    line-height: 1.4;
+    max-width: 800px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .quote-attr {
+    margin-top: 1.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: rgba(232,245,233,0.5);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    position: relative; z-index: 1;
+  }
+
+  /* ── CHALLENGES & OPPS ── */
+  .challenges { border-bottom: 1px solid var(--border); }
+
+  .ch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-top: 3rem;
+  }
+
+  .ch-col h3 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .ch-col h3 span {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+
+  .ch-col.challenges-col h3 span { background: var(--accent2); }
+  .ch-col.opps-col h3 span { background: var(--accent); }
+
+  .ch-item {
+    padding: 1.2rem 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 1rem;
+  }
+
+  .ch-item:last-child { border-bottom: none; }
+
+  .ch-item .ci-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .ch-item .ci-desc {
+    font-size: 0.8rem;
+    color: rgba(42,42,42,0.55);
+    line-height: 1.5;
+  }
+
+  .ci-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  .challenges-col .ci-dot { background: var(--accent2); }
+  .opps-col .ci-dot { background: var(--accent); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 3rem 4rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-left .fl-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  .footer-left .fl-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-top: 0.2rem;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .footer-links a {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--accent); }
+
+  /* ── ANIMATIONS on scroll ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { min-height: 40vh; }
+    .overview-inner { grid-template-columns: repeat(2, 1fr); }
+    .market-grid, .ch-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .brand-cards, .scenarios-grid, .demo-grid { grid-template-columns: 1fr 1fr; }
+    section { padding: 3rem 2rem; }
+    footer { flex-direction: column; align-items: flex-start; }
+  }
+
+  @media (max-width: 600px) {
+    .brand-cards, .scenarios-grid, .demo-grid { grid-template-columns: 1fr; }
+    .overview-inner { grid-template-columns: 1fr 1fr; }
+    .stat-block { padding: 2rem 1.5rem; }
+    .hero-left { padding: 2rem; }
+    section { padding: 3rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ HERO ═══════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-left">
+    <div>
+      <div class="badge">Desk Research · Oct 2025</div>
+      <h1 class="hero-title">
+        AI on<em>Kenyan</em>Smartphones
+      </h1>
+      <p class="hero-sub">
+        An in-depth research study examining AI feature adoption, user demographics, brand competition, and usage scenarios across Kenya's rapidly evolving mobile landscape.
+      </p>
+    </div>
+
+    <div>
+      <div class="meta-row">
+        <div class="meta-item">
+          <div class="mlabel">Scope</div>
+          <div class="mvalue">National · 2025</div>
+        </div>
+        <div class="meta-item">
+          <div class="mlabel">Brands</div>
+          <div class="mvalue">Samsung · Tecno · Oppo</div>
+        </div>
+        <div class="meta-item">
+          <div class="mlabel">Method</div>
+          <div class="mvalue">Desk Research + Social Listening</div>
+        </div>
+      </div>
+      <div class="scroll-hint">
+        <div class="scroll-line"></div>
+        Scroll to explore
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-grid-lines"></div>
+    <div class="big-stat">
+      <div class="number">42.1%</div>
+      <div class="label">ChatGPT Penetration — #1 globally</div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════ STATS STRIP ═══════════════════════════ -->
+<div class="overview">
+  <div class="overview-inner">
+    <div class="stat-block reveal">
+      <span class="snum">80.5%</span>
+      <p class="sdesc">Smartphone penetration rate in Kenya by late 2024, surpassing feature phones</p>
+    </div>
+    <div class="stat-block reveal">
+      <span class="snum">41.5M</span>
+      <p class="sdesc">Active smartphones in use by December 2024, up 10.9% quarter-over-quarter</p>
+    </div>
+    <div class="stat-block reveal">
+      <span class="snum">7%</span>
+      <p class="sdesc">Year-over-year market growth in Q2 2025, outpacing global averages</p>
+    </div>
+    <div class="stat-block reveal">
+      <span class="snum">78.5%</span>
+      <p class="sdesc">AI feature users aged 25–34, Kenya's most active smartphone demographic</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ MARKET ════════════════════════════════ -->
+<section class="market">
+  <div class="section-label">01 · Market Overview</div>
+  <h2 class="section-title reveal">Who Owns the<br>Kenyan Market?</h2>
+
+  <div class="market-grid">
+    <div class="market-intro reveal">
+      <p>Kenya's mobile ecosystem has undergone explosive growth, fueled by <strong>affordable financing models like M-KOPA</strong> (which sold over 1 million units in 2024) and 97% mobile broadband coverage. The market grew <strong>7% year-over-year in Q2 2025</strong>, outpacing global averages, with projections for a 3% rise across 2025 and a 2.1% CAGR through 2029.</p>
+      <br>
+      <p>Africa's broader market emphasizes emerging brands like <strong>Transsion for affordability</strong> in rural areas, while Samsung dominates urban premium segments. AI adoption is supercharged by Kenya's #1 global ranking in ChatGPT usage, signaling a "hustler economy" where AI drives side gigs, education, and content creation.</p>
+    </div>
+
+    <div class="brands reveal">
+      <div class="brand-row">
+        <div class="brand-meta">
+          <span class="brand-name">Samsung</span>
+          <span class="brand-pct">27.66%</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%; animation-delay:0s"></div></div>
+      </div>
+      <div class="brand-row">
+        <div class="brand-meta">
+          <span class="brand-name">Xiaomi</span>
+          <span class="brand-pct">~11%</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:40%; animation-delay:0.1s"></div></div>
+      </div>
+      <div class="brand-row">
+        <div class="brand-meta">
+          <span class="brand-name">Tecno</span>
+          <span class="brand-pct">16.14%</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:58%; animation-delay:0.2s"></div></div>
+      </div>
+      <div class="brand-row">
+        <div class="brand-meta">
+          <span class="brand-name">Infinix</span>
+          <span class="brand-pct">8.75%</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:32%; animation-delay:0.3s"></div></div>
+      </div>
+      <div class="brand-row">
+        <div class="brand-meta">
+          <span class="brand-name">Oppo</span>
+          <span class="brand-pct">8.39%</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:30%; animation-delay:0.4s"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ DEMOGRAPHICS ════════════════════════ -->
+<section class="demographics">
+  <div class="section-label">02 · Demographics</div>
+  <h2 class="section-title reveal">Who Is Using<br>AI Features?</h2>
+
+  <div class="demo-grid">
+    <div class="demo-card reveal">
+      <div class="demo-age">13–17</div>
+      <div class="demo-share">Smaller %, growing segment</div>
+      <div class="demo-title">Teens</div>
+      <p class="demo-desc">Primarily use AI for homework, basic writing aids, and creative content generation. Older teens (15–17) engage with integrated AI apps for academic and creative tasks.</p>
+      <div class="demo-features">
+        <span class="chip">ChatGPT</span>
+        <span class="chip">Grammarly</span>
+        <span class="chip">Canva Magic</span>
+        <span class="chip">Character.AI</span>
+      </div>
+    </div>
+
+    <div class="demo-card reveal">
+      <div class="demo-age">18–24</div>
+      <div class="demo-share">19.4% of smartphone users</div>
+      <div class="demo-title">Young Adults</div>
+      <p class="demo-desc">Heavy use of AI chatbots for social interaction, creative content, and learning. AI camera features with beautification and auto-editing are prominent in this group.</p>
+      <div class="demo-features">
+        <span class="chip">AI Chatbots</span>
+        <span class="chip">AI Camera</span>
+        <span class="chip">Social Media</span>
+        <span class="chip">Learning</span>
+      </div>
+    </div>
+
+    <div class="demo-card reveal">
+      <div class="demo-age">25–34</div>
+      <div class="demo-share">78.5% — dominant group</div>
+      <div class="demo-title">Millennials</div>
+      <p class="demo-desc">The strongest AI adopters. Deep use of Google Assistant, Bixby, and Tecno's Ella for scheduling, real-time translation, and advanced camera AI for professional photography.</p>
+      <div class="demo-features">
+        <span class="chip">AI Assistants</span>
+        <span class="chip">Live Translate</span>
+        <span class="chip">Camera Pro</span>
+        <span class="chip">Productivity</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ BRANDS ════════════════════════════════ -->
+<section class="brands-section">
+  <div class="section-label">03 · Focus Brands</div>
+  <h2 class="section-title reveal">AI Ecosystems<br>at a Glance</h2>
+
+  <div class="brand-cards">
+    <div class="brand-card reveal">
+      <div class="bc-name">Tecno</div>
+      <span class="bc-share">Market share: 16.14%</span>
+      <div class="bc-tag">Affordable · Africa-Tailored</div>
+      <ul class="bc-features">
+        <li>Ella AI (Google Gemini) — voice assistant with Swahili/Sheng support</li>
+        <li>AIGC Portrait 2.0, AI Eraser 2.0, skin-tone optimization for African complexions</li>
+        <li>Real-time translation in 136 languages; offline-capable</li>
+        <li>AI Meeting Assistant with transcription and call summarization</li>
+        <li>Entry price from KES 15,000 — targets budget-conscious youth</li>
+      </ul>
+    </div>
+
+    <div class="brand-card reveal">
+      <div class="bc-name">Samsung</div>
+      <span class="bc-share">Market share: 27.66%</span>
+      <div class="bc-tag">Premium · Galaxy AI</div>
+      <ul class="bc-features">
+        <li>Galaxy AI on 200M+ devices via One UI 8 updates</li>
+        <li>Circle to Search, Live Translate (13+ languages incl. Swahili)</li>
+        <li>Note Assist, Chat Assist, Social Composer, Smart Clipboard</li>
+        <li>200MP ProVisual Engine with Object Eraser & Photo Assist</li>
+        <li>A26 5G with M-Pesa AI integration for urban Kenya</li>
+      </ul>
+    </div>
+
+    <div class="brand-card reveal">
+      <div class="bc-name">Oppo</div>
+      <span class="bc-share">Market share: 8.39%</span>
+      <div class="bc-tag">Creative · Photography-First</div>
+      <ul class="bc-features">
+        <li>ColorOS 15 with 100+ AI features and Google Cloud Gemini integration</li>
+        <li>AI Reflection Remover, AI Unblur, AI Perfect Shot, AI Recompose</li>
+        <li>AI LinkBoost — antenna switching for low-signal Nairobi traffic</li>
+        <li>Sheng translation integration via local app partners</li>
+        <li>AI Studio for avatar generation and creative editing</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ SCENARIOS ═════════════════════════════ -->
+<section class="scenarios">
+  <div class="section-label">04 · Usage Scenarios</div>
+  <h2 class="section-title reveal">How Kenyans<br>Use AI Daily</h2>
+
+  <div class="scenarios-grid">
+    <div class="scenario-block reveal">
+      <span class="scenario-icon">📸</span>
+      <div class="scenario-name">Photography & Social Sharing</div>
+      <p class="scenario-desc">AI-powered cameras dominate with 56% usage. Users capture high-quality images for Instagram, TikTok, and mitumba (secondhand goods) e-commerce with one-tap editing.</p>
+    </div>
+    <div class="scenario-block reveal">
+      <span class="scenario-icon">💬</span>
+      <div class="scenario-name">Language Translation</div>
+      <p class="scenario-desc">Real-time AI translation bridges Kenya's diverse linguistic landscape — across Swahili, Sheng, English, and 44+ languages — during calls, meetings, and face-to-face interactions.</p>
+    </div>
+    <div class="scenario-block reveal">
+      <span class="scenario-icon">🌾</span>
+      <div class="scenario-name">Agriculture & Pest Detection</div>
+      <p class="scenario-desc">Farmers use AI photo-scan apps to identify crop diseases and market prices. 1,000+ youths via Hack for Environment have built climate AI tools on smartphones.</p>
+    </div>
+    <div class="scenario-block reveal">
+      <span class="scenario-icon">💼</span>
+      <div class="scenario-name">Side Hustles & Content</div>
+      <p class="scenario-desc">Kenya's "hustler economy" relies on AI for CV generation, social post creation, and branding of informal businesses. ChatGPT leads at 67% chatting engagement.</p>
+    </div>
+    <div class="scenario-block reveal">
+      <span class="scenario-icon">🎓</span>
+      <div class="scenario-name">Education & Productivity</div>
+      <p class="scenario-desc">Students access free Gemini Pro (12 months for Kenyan unis). AI summarizes lectures, translates Sheng-English, and assists with academic research and writing.</p>
+    </div>
+    <div class="scenario-block reveal">
+      <span class="scenario-icon">💳</span>
+      <div class="scenario-name">Financial & Health Services</div>
+      <p class="scenario-desc">M-Pesa integrates AI for fraud detection. Health apps analyze sensor data offline. AI enables credit access assessment, supporting small business expansion across Kenya.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ QUOTE ════════════════════════════════ -->
+<div class="quote-section">
+  <p class="quote-text">"Kenya's AI smartphone adoption reflects a 'hustler economy' — where AI isn't a luxury feature but a daily productivity multiplier for young Africans navigating 32% youth unemployment."</p>
+  <p class="quote-attr">— Research Finding · AI Features & Usage Scenarios on Smartphones by Kenyan Users</p>
+</div>
+
+<!-- ═══════════════════════════════════ CHALLENGES ═══════════════════════════ -->
+<section class="challenges">
+  <div class="section-label">05 · Challenges & Opportunities</div>
+  <h2 class="section-title reveal">The Road Ahead</h2>
+
+  <div class="ch-grid">
+    <div class="ch-col challenges-col reveal">
+      <h3><span></span>Challenges</h3>
+
+      <div class="ch-item">
+        <div class="ci-dot"></div>
+        <div>
+          <div class="ci-title">Connectivity Gaps</div>
+          <p class="ci-desc">Rural 4G limitations hinder cloud-based AI. Oppo's LinkBoost partially addresses this, but offline-first AI remains critical for rural penetration.</p>
+        </div>
+      </div>
+      <div class="ch-item">
+        <div class="ci-dot"></div>
+        <div>
+          <div class="ci-title">Data Privacy & Ethics</div>
+          <p class="ci-desc">User concerns around tracking and unrestricted AI access persist. Kenya's National AI Strategy 2025–2030 addresses this via Data Protection Act frameworks.</p>
+        </div>
+      </div>
+      <div class="ch-item">
+        <div class="ci-dot"></div>
+        <div>
+          <div class="ci-title">Affordability Divide</div>
+          <p class="ci-desc">Premium AI features on Samsung devices exclude low-income users. Tecno and Infinix bridge this gap, but advanced AI remains aspirational for many.</p>
+        </div>
+      </div>
+      <div class="ch-item">
+        <div class="ci-dot"></div>
+        <div>
+          <div class="ci-title">Local Development Skills Gap</div>
+          <p class="ci-desc">High consumption but low local AI production. Zindi and university partnerships are building capacity, but global AI tools still dominate the ecosystem.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="ch-col opps-col reveal">
+      <h3><span></span>Opportunities</h3>
+
+      <div class="ch-item">
+        <div class="ci-dot"></div>
+        <div>
+          <div class="ci-title">Swahili & Sheng Localization</div>
+          <p class="ci-desc">Localizing AI for Kenya's 200M+ Swahili speakers and 50–70% Sheng-speaking urban youth could boost engagement by 25–30%, per NLP studies.</p>
+        </div>
+      </div>
+      <div class="ch-item">
+        <div class="ci-dot"></div>
+        <div>
+          <div class="ci-title">Agriculture & Food Security</div>
+          <p class="ci-desc">AI crop-diagnosis apps could boost yields by 20%. Kenya's large agricultural workforce presents an underserved opportunity for mobile-first AI solutions.</p>
+        </div>
+      </div>
+      <div class="ch-item">
+        <div class="ci-dot"></div>
+        <div>
+          <div class="ci-title">M-Pesa AI Integration</div>
+          <p class="ci-desc">With mobile money representing 50% of GDP activity, AI-enhanced M-Pesa features (fraud detection, credit scoring) offer transformative fintech potential.</p>
+        </div>
+      </div>
+      <div class="ch-item">
+        <div class="ci-dot"></div>
+        <div>
+          <div class="ci-title">Youth Talent Pipeline</div>
+          <p class="ci-desc">Free Gemini access for Kenyan universities, Samsung AI campaigns, and Zindi hackathons are seeding a generation of local AI developers and innovators.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ FOOTER ═══════════════════════════════ -->
+<footer>
+  <div class="footer-left">
+    <div class="fl-title">AI × Kenya · 2025</div>
+    <div class="fl-sub">Desk Research — AI Features & Usage Scenarios on Smartphones</div>
+  </div>
+
+  <div class="footer-links">
+    <a href="#">Back to Portfolio</a>
+    <a href="#">View Full Report</a>
+    <a href="#">Contact</a>
+  </div>
+</footer>
+
+<script>
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, 80 * (Array.from(reveals).indexOf(entry.target) % 4));
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
