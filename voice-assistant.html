@@ -2,396 +2,1424 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ella Voice Assistant – UX Case Study</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Voice Assistants in Kenya — Research Case Study</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
+    /* ── LIGHT MODE (default) ── */
     :root {
-      --ink: #0d0f14; --muted: #5c6370; --faint: #f4f5f7; --border: #e4e7ec;
-      --accent: #e8500a; --accent-light: #fff1eb;
-      --green: #1a9e6e; --green-light: #eafaf4;
-      --blue: #1d6fe8; --blue-light: #ebf2fd;
-      --gold: #c98a00; --gold-light: #fdf6e3;
-      --red: #c0392b; --red-light: #fdf0ee;
-      --radius: 12px; --shadow-lg: 0 8px 40px rgba(0,0,0,.12);
+      --bg: #f4f2ef;
+      --surface: #eae8e4;
+      --card: #f9f8f6;
+      --accent: #1a6b8a;
+      --accent2: #2e7d5e;
+      --accent3: #c0532a;
+      --accent4: #8a5c1a;
+      --text: #1a1a1a;
+      --muted: #7a7a76;
+      --border: #d6d4cf;
+      --hero-bg1: rgba(26,107,138,0.07);
+      --hero-bg2: rgba(192,83,42,0.06);
+      --hero-bg3: rgba(46,125,94,0.04);
+      --quote-bg: rgba(26,107,138,0.06);
+      --stat-num: var(--accent);
     }
+
+    /* ── DARK MODE ── */
+    body.dark {
+      --bg: #111318;
+      --surface: #191c22;
+      --card: #1e2128;
+      --accent: #4fc3f7;
+      --accent2: #56c794;
+      --accent3: #ff8a65;
+      --accent4: #ffd54f;
+      --text: #e8e6e1;
+      --muted: #8a8a86;
+      --border: #2e3138;
+      --hero-bg1: rgba(79,195,247,0.05);
+      --hero-bg2: rgba(255,138,101,0.05);
+      --hero-bg3: rgba(86,199,148,0.04);
+      --quote-bg: rgba(79,195,247,0.06);
+      --stat-num: var(--accent);
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fff; color: var(--ink); line-height: 1.65; font-size: 16px; }
 
-    nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 60px; background: rgba(255,255,255,.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
-    .nav-logo { font-weight: 700; font-size: 15px; color: var(--ink); text-decoration: none; }
-    .nav-links { display: flex; gap: 28px; list-style: none; }
-    .nav-links a { font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; }
-    .nav-links a:hover { color: var(--ink); }
-    .nav-badge { font-size: 12px; font-weight: 600; padding: 5px 14px; background: var(--accent); color: #fff; border-radius: 99px; text-decoration: none; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
 
-    .hero { background: linear-gradient(135deg, #0d0f14 0%, #1a2235 60%, #0f1e35 100%); color: #fff; padding: 100px 40px 90px; position: relative; overflow: hidden; }
-    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 75% 50%, rgba(232,80,10,.18), transparent); }
-    .hero-inner { max-width: 900px; margin: 0 auto; position: relative; }
-    .hero-tag { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); background: rgba(232,80,10,.12); padding: 5px 14px; border-radius: 99px; border: 1px solid rgba(232,80,10,.25); margin-bottom: 24px; }
-    .hero h1 { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -.02em; }
-    .hero h1 span { color: var(--accent); }
-    .hero-sub { font-size: 18px; color: rgba(255,255,255,.68); max-width: 620px; margin-bottom: 40px; line-height: 1.7; }
-    .hero-meta { display: flex; flex-wrap: wrap; gap: 24px; }
-    .meta-item { display: flex; flex-direction: column; gap: 4px; }
-    .meta-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.4); }
-    .meta-value { font-size: 14px; font-weight: 600; color: rgba(255,255,255,.9); }
+    /* ── GRAIN OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.22;
+    }
 
-    .page { max-width: 900px; margin: 0 auto; padding: 0 40px; }
-    section { padding: 72px 0; border-bottom: 1px solid var(--border); }
-    section:last-child { border-bottom: none; }
-    h2 { font-size: 1.7rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: 8px; }
-    .section-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
-    .section-intro { font-size: 16px; color: var(--muted); max-width: 640px; margin-bottom: 40px; line-height: 1.75; }
-    .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+    /* ── DARK MODE TOGGLE ── */
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.4em 1em;
+      cursor: pointer;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
 
-    .callout { border-radius: var(--radius); padding: 24px 28px; margin-bottom: 20px; display: flex; gap: 16px; align-items: flex-start; }
-    .callout-icon { font-size: 22px; flex-shrink: 0; }
-    .callout-body { flex: 1; }
-    .callout-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-    .callout-text { font-size: 14px; line-height: 1.65; color: var(--muted); }
-    .callout.orange { background: var(--accent-light); border-left: 3px solid var(--accent); }
-    .callout.blue { background: var(--blue-light); border-left: 3px solid var(--blue); }
-    .callout.red { background: var(--red-light); border-left: 3px solid var(--red); }
-    .callout.gold { background: var(--gold-light); border-left: 3px solid var(--gold); }
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
 
-    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 40px; }
-    .stat-card { background: var(--faint); border-radius: var(--radius); padding: 20px 22px; border: 1px solid var(--border); }
-    .stat-num { font-size: 2rem; font-weight: 800; letter-spacing: -.03em; }
-    .stat-num.accent { color: var(--accent); }
-    .stat-num.green { color: var(--green); }
-    .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 80% 20%, var(--hero-bg1) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 70% at 10% 80%, var(--hero-bg2) 0%, transparent 55%),
+        radial-gradient(ellipse 80% 40% at 50% 50%, var(--hero-bg3) 0%, transparent 70%);
+      z-index: 0;
+    }
 
-    .comp-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 24px; }
-    .comp-table th { text-align: left; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 10px 16px; background: var(--faint); border: 1px solid var(--border); }
-    .comp-table th:not(:first-child) { text-align: center; }
-    .comp-table td { padding: 12px 16px; border: 1px solid var(--border); }
-    .comp-table td:not(:first-child) { text-align: center; font-weight: 700; }
-    .comp-table tr:nth-child(even) td { background: var(--faint); }
-    .col-ella { background: rgba(232,80,10,.04) !important; }
-    .th-ella { background: rgba(232,80,10,.08) !important; color: var(--accent) !important; }
-    .winner { color: var(--green); }
-    .loser { color: var(--red); }
-    .neutral-c { color: var(--gold); }
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(30,30,30,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30,30,30,0.04) 1px, transparent 1px);
+      background-size: 80px 80px;
+      z-index: 0;
+    }
 
-    .bar-list { display: flex; flex-direction: column; gap: 12px; }
-    .bar-row { display: flex; align-items: center; gap: 14px; }
-    .bar-label { font-size: 13px; width: 190px; flex-shrink: 0; font-weight: 500; }
-    .bar-track { flex: 1; height: 10px; background: var(--border); border-radius: 99px; overflow: hidden; }
-    .bar-fill { height: 100%; border-radius: 99px; }
-    .bar-fill.o { background: var(--accent); }
-    .bar-fill.b { background: var(--blue); }
-    .bar-fill.g { background: #bdc3ce; }
-    .bar-val { font-size: 13px; font-weight: 700; width: 40px; text-align: right; }
+    body.dark .hero-grid {
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    }
 
-    .quote-block { background: var(--faint); border-radius: var(--radius); padding: 28px 32px; margin: 12px 0; border-left: 4px solid var(--accent); position: relative; }
-    .quote-block::before { content: '"'; font-size: 60px; line-height: 1; color: var(--accent); opacity: .2; position: absolute; top: 12px; left: 20px; font-family: Georgia, serif; }
-    .quote-text { font-size: 15px; font-style: italic; padding-left: 20px; line-height: 1.7; }
-    .quote-attr { font-size: 13px; color: var(--muted); margin-top: 10px; padding-left: 20px; font-weight: 600; }
+    .nav {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 4rem;
+      border-bottom: 1px solid var(--border);
+    }
 
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+    .nav-left { display: flex; align-items: center; gap: 2rem; }
 
-    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
-    .feature-card { border-radius: var(--radius); padding: 22px; border: 1px solid var(--border); }
-    .feature-icon { font-size: 26px; margin-bottom: 12px; }
-    .feature-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
-    .feature-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
-    .feature-card.win { background: var(--green-light); border-color: rgba(26,158,110,.2); }
-    .feature-card.neutral { background: var(--faint); }
+    .nav-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
 
-    .pyramid { margin: 32px auto; max-width: 520px; }
-    .pyramid-tier { border-radius: 10px; padding: 18px 24px; display: flex; align-items: center; gap: 14px; margin-bottom: 10px; font-weight: 700; font-size: 14px; }
-    .pyramid-icon { font-size: 22px; }
-    .pyramid-sub { font-size: 12px; font-weight: 400; opacity: .85; }
-    .t1 { background: #e74c3c; color: #fff; }
-    .t2 { background: var(--gold); color: #fff; }
-    .t3 { background: var(--green); color: #fff; }
+    .nav-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 0.4em 1em;
+    }
 
-    .rec-list { display: flex; flex-direction: column; gap: 16px; }
-    .rec-item { display: flex; gap: 16px; align-items: flex-start; padding: 18px 22px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--faint); }
-    .rec-num { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; }
-    .rec-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-    .rec-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    /* ── HERO SVG ILLUSTRATION ── */
+    .hero-illustration {
+      position: absolute;
+      right: 4rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1;
+      opacity: 0.18;
+      width: 340px;
+    }
 
-    .result-banner { background: linear-gradient(135deg, var(--green), #0e7a53); color: #fff; border-radius: var(--radius); padding: 40px; display: flex; align-items: center; gap: 32px; margin-bottom: 32px; box-shadow: var(--shadow-lg); }
-    .result-big { font-size: 4rem; font-weight: 900; letter-spacing: -.04em; flex-shrink: 0; }
-    .result-text { font-size: 17px; opacity: .9; line-height: 1.6; }
-    .result-text strong { font-size: 18px; opacity: 1; }
+    body.dark .hero-illustration { opacity: 0.12; }
 
-    .persona-card { background: linear-gradient(135deg, #0d0f14, #1a2235); color: #fff; border-radius: var(--radius); padding: 32px; display: flex; gap: 28px; align-items: flex-start; margin-bottom: 32px; box-shadow: var(--shadow-lg); }
-    .persona-avatar { width: 68px; height: 68px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
-    .persona-name { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
-    .persona-role { font-size: 13px; color: rgba(255,255,255,.55); margin-bottom: 16px; }
-    .persona-detail { font-size: 13px; color: rgba(255,255,255,.75); line-height: 1.7; }
-    .ph { color: var(--accent); font-weight: 600; }
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem 4rem 2rem;
+      max-width: 900px;
+    }
 
-    .check-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-    .check-list li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--muted); line-height: 1.6; }
-    .check-list li::before { content: '✓'; color: var(--green); font-weight: 800; flex-shrink: 0; }
-    .x-list li::before { content: '✕'; color: var(--red); }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
 
-    footer { background: var(--ink); color: rgba(255,255,255,.5); text-align: center; padding: 40px; font-size: 13px; }
-    footer a { color: var(--accent); text-decoration: none; }
+    .hero-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 40px;
+      height: 1px;
+      background: var(--accent2);
+    }
 
-    @media (max-width: 700px) {
-      nav { padding: 0 20px; } .nav-links { display: none; }
-      .page { padding: 0 20px; } .hero { padding: 64px 20px 60px; }
-      .result-banner { flex-direction: column; text-align: center; } .persona-card { flex-direction: column; }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 6.5vw, 6rem);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-subtitle {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.8;
+    }
+
+    .hero-meta {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      gap: 3rem;
+      flex-wrap: wrap;
+      padding: 2.5rem 4rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .meta-item { display: flex; flex-direction: column; gap: 0.3rem; }
+
+    .meta-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .meta-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* ── STATS BAND ── */
+    .stats-band {
+      background: var(--surface);
+      padding: 4rem;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat {
+      padding: 2rem 2.5rem;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .stat:last-child { border-right: none; }
+
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--stat-num);
+      letter-spacing: -0.03em;
+    }
+
+    .stat-desc {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 6rem 4rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent3);
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 2rem;
+    }
+
+    h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+
+    p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.9;
+      max-width: 680px;
+    }
+
+    /* ── TWO COL ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    /* ── FINDINGS GRID ── */
+    .findings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .finding-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .finding-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(26,107,138,0.3);
+    }
+
+    .finding-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent2), transparent);
+    }
+
+    .finding-card.accent-orange::before {
+      background: linear-gradient(90deg, var(--accent3), transparent);
+    }
+
+    .finding-card.accent-gold::before {
+      background: linear-gradient(90deg, var(--accent4), transparent);
+    }
+
+    .finding-card.accent-blue::before {
+      background: linear-gradient(90deg, var(--accent), transparent);
+    }
+
+    .card-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      font-weight: 900;
+      line-height: 1;
+      color: rgba(26,107,138,0.08);
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      letter-spacing: -0.05em;
+    }
+
+    body.dark .card-number { color: rgba(79,195,247,0.06); }
+
+    .finding-card h3 { color: var(--text); text-transform: none; font-size: 0.95rem; letter-spacing: 0; margin-bottom: 0.75rem; }
+    .finding-card p { font-size: 0.82rem; max-width: 100%; }
+
+    /* ── BAR CHART ── */
+    .chart-section { margin-top: 2rem; }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .bar-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      width: 180px;
+      flex-shrink: 0;
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 6px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      transform-origin: left;
+      animation: barGrow 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transform: scaleX(0);
+    }
+
+    .bar-fill.orange { background: linear-gradient(90deg, var(--accent3), var(--accent4)); }
+
+    @keyframes barGrow {
+      to { transform: scaleX(1); }
+    }
+
+    .bar-pct {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--accent);
+      width: 55px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* ── QUOTES ── */
+    .quotes-stack { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 1rem; }
+
+    .quote-block {
+      border-left: 2px solid var(--accent2);
+      padding: 1.5rem 2rem;
+      background: var(--quote-bg);
+    }
+
+    .quote-block p {
+      font-style: italic;
+      font-size: 0.82rem;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+      max-width: 100%;
+    }
+
+    .quote-author {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent2);
+    }
+
+    /* ── CHALLENGES LIST ── */
+    .challenges-list { margin-top: 1rem; }
+
+    .challenge-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .challenge-name {
+      font-size: 0.8rem;
+      color: var(--text);
+    }
+
+    .challenge-pct {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent3);
+    }
+
+    .challenge-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.25em 0.8em;
+      border-radius: 0;
+    }
+
+    .tag-strong { background: rgba(46,125,94,0.12); color: var(--accent2); }
+    .tag-weak { background: rgba(192,83,42,0.12); color: var(--accent3); }
+    .tag-same { background: rgba(26,107,138,0.12); color: var(--accent); }
+
+    /* ── RECS GRID ── */
+    .recs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .rec-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      transition: border-color 0.3s;
+    }
+
+    .rec-card:hover { border-color: rgba(192,83,42,0.35); }
+
+    .rec-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: rgba(192,83,42,0.22);
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .rec-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent3);
+      margin-bottom: 1rem;
+    }
+
+    .rec-card p { font-size: 0.8rem; max-width: 100%; }
+
+    /* ── CHART CANVAS ── */
+    .canvas-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 520px;
+    }
+
+    /* ── CONCLUSION ── */
+    .conclusion {
+      background: var(--surface);
+      padding: 7rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .conclusion-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 90% 50%, rgba(26,107,138,0.06) 0%, transparent 65%);
+    }
+
+    .conclusion .section-label { color: var(--accent); }
+
+    .conclusion h2 { max-width: 800px; }
+
+    .conclusion-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      margin-top: 3rem;
+    }
+
+    /* ── SVG ICON STRIP ── */
+    .icon-strip {
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .icon-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      text-align: center;
+      flex: 1;
+      min-width: 100px;
+    }
+
+    .icon-block span {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* ── PERSONA CARD ── */
+    .persona-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+
+    .persona-avatar {
+      flex-shrink: 0;
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .persona-info h3 { color: var(--accent); font-size: 0.82rem; margin-bottom: 0.5rem; }
+    .persona-info p { font-size: 0.78rem; max-width: 100%; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 3rem 4rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--surface);
+    }
+
+    footer .f-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+
+    footer .f-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-top: 0.3rem;
+    }
+
+    /* ── ANIMATIONS ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── SCORE TABLE ── */
+    .score-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+      font-size: 0.78rem;
+    }
+
+    .score-table th {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .score-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .score-table tr:hover td { background: rgba(26,107,138,0.04); }
+
+    .score-cell {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .score-best { color: var(--accent2); }
+    .score-mid { color: var(--accent4); }
+    .score-low { color: var(--accent3); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .nav { padding: 1.5rem 2rem; }
+      section { padding: 4rem 2rem; }
+      .stats-band { grid-template-columns: 1fr 1fr; padding: 2rem; }
+      .findings-grid { grid-template-columns: 1fr; }
+      .two-col { grid-template-columns: 1fr; gap: 3rem; }
+      .recs-grid { grid-template-columns: 1fr; }
+      .hero-meta { flex-wrap: wrap; padding: 2rem; gap: 2rem; }
+      .hero-content { padding: 3rem 2rem 1rem; }
+      .conclusion { padding: 4rem 2rem; }
+      .conclusion-body { grid-template-columns: 1fr; gap: 2rem; }
+      footer { padding: 2rem; flex-direction: column; gap: 1rem; text-align: center; }
+      .hero-illustration { display: none; }
     }
   </style>
 </head>
 <body>
 
-<nav>
-  <a href="#" class="nav-logo">UX Case Study</a>
-  <ul class="nav-links">
-    <li><a href="#outcome">Impact</a></li>
-    <li><a href="#problem">Problem</a></li>
-    <li><a href="#research">Research</a></li>
-    <li><a href="#findings">Findings</a></li>
-    <li><a href="#strategy">Strategy</a></li>
-  </ul>
-  <a href="mailto:hello@example.com" class="nav-badge">Let's Talk</a>
-</nav>
+<!-- HERO -->
+<section class="hero" style="padding:0;">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
 
-<header class="hero">
-  <div class="hero-inner">
-    <div class="hero-tag">🎙 Voice Assistant UX Research</div>
-    <h1>Bridging the <span>Linguistic Divide</span><br>for African Markets</h1>
-    <p class="hero-sub">A competitive benchmarking and user satisfaction study of Ella, Folax, Google Assistant, Bixby, and Siri — focused on the Kenyan market and designed to close the gap between local user needs and global technology assumptions.</p>
-    <div class="hero-meta">
-      <div class="meta-item"><span class="meta-label">Timeline</span><span class="meta-value">2023 – 2025</span></div>
-      <div class="meta-item"><span class="meta-label">Company</span><span class="meta-value">Transsion (Caricare)</span></div>
-      <div class="meta-item"><span class="meta-label">My Role</span><span class="meta-value">UX Researcher</span></div>
-      <div class="meta-item"><span class="meta-label">Method</span><span class="meta-value">Interviews · Usability Testing · Analysis</span></div>
-      <div class="meta-item"><span class="meta-label">Sample</span><span class="meta-value">12 Daily Users · Nairobi, Kenya</span></div>
+  <!-- DECORATIVE MIC SVG -->
+  <div class="hero-illustration" aria-hidden="true">
+    <svg viewBox="0 0 340 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="170" cy="180" r="140" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+      <circle cx="170" cy="180" r="100" stroke="currentColor" stroke-width="1" opacity="0.2"/>
+      <circle cx="170" cy="180" r="60" stroke="currentColor" stroke-width="1" opacity="0.15"/>
+      <rect x="148" y="100" width="44" height="80" rx="22" fill="currentColor" opacity="0.4"/>
+      <path d="M130 185 C130 215 210 215 210 185" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+      <line x1="170" y1="215" x2="170" y2="240" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/>
+      <line x1="150" y1="240" x2="190" y2="240" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/>
+      <!-- Waveform lines -->
+      <line x1="60" y1="175" x2="60" y2="185" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.25"/>
+      <line x1="75" y1="165" x2="75" y2="195" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.25"/>
+      <line x1="90" y1="155" x2="90" y2="205" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.25"/>
+      <line x1="250" y1="175" x2="250" y2="185" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.25"/>
+      <line x1="265" y1="165" x2="265" y2="195" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.25"/>
+      <line x1="280" y1="155" x2="280" y2="205" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.25"/>
+      <!-- Voice bubbles -->
+      <circle cx="100" cy="310" r="18" stroke="currentColor" stroke-width="1" opacity="0.2"/>
+      <circle cx="240" cy="310" r="12" stroke="currentColor" stroke-width="1" opacity="0.15"/>
+      <circle cx="170" cy="340" r="8" stroke="currentColor" stroke-width="1" opacity="0.12"/>
+    </svg>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-left">
+      <span class="nav-label">Research Portfolio — Case Study</span>
+      <span class="nav-tag">Kenya · April 2023</span>
+    </div>
+    <button class="theme-toggle" id="themeBtn" aria-label="Toggle dark mode">☀ Light</button>
+  </nav>
+
+  <div class="hero-content fade-in">
+    <p class="hero-eyebrow">Voice Assistant Satisfaction Research</p>
+    <h1 class="hero-title">
+      How Kenyans<br/>
+      Experience &amp;<br/>
+      <em>Rate Voice Assistants</em>
+    </h1>
+    <p class="hero-subtitle">
+      A comprehensive user experience study assessing satisfaction levels among daily voice assistant users — comparing Ella, Folax, Siri, Bixby, and Google Assistant across ten performance dimensions.
+    </p>
+  </div>
+
+  <div class="hero-meta fade-in">
+    <div class="meta-item">
+      <span class="meta-label">Sample Size</span>
+      <span class="meta-value">12 Participants</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Methodology</span>
+      <span class="meta-value">In-Depth Interviews</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Conducted</span>
+      <span class="meta-value">April 2023</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Assistants Tested</span>
+      <span class="meta-value">Ella, Folax, Siri, Bixby, Google</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Market</span>
+      <span class="meta-value">Kenyan Daily Users</span>
     </div>
   </div>
-</header>
+</section>
 
-<div class="page">
-
-  <section id="outcome">
-    <div class="section-eyebrow">Impact</div>
-    <h2>Research Drove Real Results</h2>
-    <p class="section-intro">The insights from this study directly informed product improvements that measurably changed how Ella performed in the field.</p>
-    <div class="result-banner">
-      <div class="result-big">+30%</div>
-      <div class="result-text">
-        <strong>Improvement in voice command accuracy</strong><br>
-        Research contributed to a 30% improvement in Ella's voice command accuracy and measurably higher user adoption rates across African markets — a direct result of diagnosing and prioritising the right failure modes.
-      </div>
-    </div>
-    <div class="stat-grid">
-      <div class="stat-card"><div class="stat-num green">7.6</div><div class="stat-label">Ella Overall Score<br><span style="color:#bdc3ce;font-size:11px">vs 8.1 Google (Gold Standard)</span></div></div>
-      <div class="stat-card"><div class="stat-num accent">3.6</div><div class="stat-label">Reminders Score<br><span style="color:#bdc3ce;font-size:11px">Ella's biggest failure point</span></div></div>
-      <div class="stat-card"><div class="stat-num green">8.3</div><div class="stat-label">Entertainment Score<br><span style="color:#bdc3ce;font-size:11px">Ella's clear competitive lead</span></div></div>
-      <div class="stat-card"><div class="stat-num">8.0</div><div class="stat-label">Travel & Navigation<br><span style="color:#bdc3ce;font-size:11px">Ella's second strongest area</span></div></div>
-    </div>
-  </section>
-
-  <section id="problem">
-    <div class="section-eyebrow">The Problem</div>
-    <h2>A Market Underserved by Western Tech</h2>
-    <p class="section-intro">Existing voice assistants were trained predominantly on Western English — and simply did not account for the phonological diversity, code-switching patterns, or acoustic environments of African users.</p>
-    <div class="two-col" style="margin-bottom:20px;">
-      <div class="callout orange" style="margin-bottom:0"><div class="callout-icon">🔊</div><div class="callout-body"><div class="callout-title">Phonological Diversity</div><div class="callout-text">Assistants struggled with local accents and natural code-switching between English and Swahili — a normal part of everyday Kenyan speech.</div></div></div>
-      <div class="callout blue" style="margin-bottom:0"><div class="callout-icon">📶</div><div class="callout-body"><div class="callout-title">Environment & Connectivity</div><div class="callout-text">High ambient noise in urban Nairobi settings degraded recognition accuracy. Offline functionality — crucial in this market — was largely absent.</div></div></div>
-    </div>
-    <div class="callout red"><div class="callout-icon">📉</div><div class="callout-body"><div class="callout-title">Low Adoption & Poor Accuracy</div><div class="callout-text">The result was low adoption rates and poor command accuracy across all tested platforms — even the global leaders. A clear opportunity existed for a locally-tuned assistant to lead.</div></div></div>
-  </section>
-
-  <section id="research">
-    <div class="section-eyebrow">Research Methodology</div>
-    <h2>How We Gathered the Evidence</h2>
-    <p class="section-intro">A mixed-method approach combining in-depth offline interviews with structured usability testing — designed to capture both attitude and actual behaviour in naturalistic contexts.</p>
-    <div class="stat-grid">
-      <div class="stat-card"><div class="stat-num">12</div><div class="stat-label">Participants (daily VA users)</div></div>
-      <div class="stat-card"><div class="stat-num accent">66.7%</div><div class="stat-label">Ages 25–30 (urban professionals)</div></div>
-      <div class="stat-card"><div class="stat-num">91.7%</div><div class="stat-label">Degree holders</div></div>
-      <div class="stat-card"><div class="stat-num green">50%</div><div class="stat-label">Use VA more than 5x per day</div></div>
-    </div>
-    <div class="two-col" style="margin-bottom:32px;">
-      <div><h3 style="font-size:15px;font-weight:700;margin-bottom:12px;">Sampling Strategy</h3><ul class="check-list"><li>Stratified by age, gender, and location</li><li>All participants were daily VA users</li><li>Mix of Ella, Folax, Bixby, Siri, and Google users</li><li>Urban and peri-urban Nairobi contexts</li></ul></div>
-      <div><h3 style="font-size:15px;font-weight:700;margin-bottom:12px;">Data Collection</h3><ul class="check-list"><li>Offline in-depth interviews (consent-based)</li><li>Structured task-based usability tests</li><li>1–10 rating scales across 10 functional areas</li><li>Open-ended qualitative testimonials</li><li>Multi-modal audio & behavioural annotation</li></ul></div>
-    </div>
-
-    <h3 style="font-size:15px;font-weight:700;margin-bottom:20px;">Representative User Persona</h3>
-    <div class="persona-card">
-      <div class="persona-avatar">👨🏾‍💻</div>
-      <div>
-        <div class="persona-name">Alex Muhia</div>
-        <div class="persona-role">Software Engineer · Tecno Camon Premier · Primary VA: <span class="ph">Ella</span></div>
-        <div class="persona-detail">Alex is 29, single, and uses Ella daily — primarily during his commute. His mornings involve checking his calendar and navigation. Throughout the day he asks for trending stories, appointment reminders, news, and podcasts. He represents the majority profile: a young, urban, degree-educated professional who is a <span class="ph">power user</span> but highly attuned to performance gaps.</div>
-      </div>
-    </div>
-
-    <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;">When & Where Users Engage</h3>
-    <div class="bar-list" style="margin-bottom:32px;">
-      <div class="bar-row"><span class="bar-label">Morning & Evening</span><div class="bar-track"><div class="bar-fill o" style="width:41.7%"></div></div><span class="bar-val">41.7%</span></div>
-      <div class="bar-row"><span class="bar-label">Morning Only</span><div class="bar-track"><div class="bar-fill o" style="width:33.3%"></div></div><span class="bar-val">33.3%</span></div>
-      <div class="bar-row"><span class="bar-label">Noon Only</span><div class="bar-track"><div class="bar-fill g" style="width:16.7%"></div></div><span class="bar-val">16.7%</span></div>
-      <div class="bar-row"><span class="bar-label">Evening Only</span><div class="bar-track"><div class="bar-fill g" style="width:8.3%"></div></div><span class="bar-val">8.3%</span></div>
-    </div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;font-weight:600;">Top use cases by adoption</p>
-    <div class="bar-list">
-      <div class="bar-row"><span class="bar-label">Information (Weather/News)</span><div class="bar-track"><div class="bar-fill o" style="width:66.7%"></div></div><span class="bar-val">66.7%</span></div>
-      <div class="bar-row"><span class="bar-label">Communication</span><div class="bar-track"><div class="bar-fill o" style="width:58.3%"></div></div><span class="bar-val">58.3%</span></div>
-      <div class="bar-row"><span class="bar-label">Entertainment</span><div class="bar-track"><div class="bar-fill o" style="width:41.7%"></div></div><span class="bar-val">41.7%</span></div>
-      <div class="bar-row"><span class="bar-label">Travel / Navigation</span><div class="bar-track"><div class="bar-fill b" style="width:33.3%"></div></div><span class="bar-val">33.3%</span></div>
-      <div class="bar-row"><span class="bar-label">Reminders / Alarms</span><div class="bar-track"><div class="bar-fill b" style="width:25%"></div></div><span class="bar-val">25.0%</span></div>
-      <div class="bar-row"><span class="bar-label">Voice Search</span><div class="bar-track"><div class="bar-fill g" style="width:16.7%"></div></div><span class="bar-val">16.7%</span></div>
-    </div>
-  </section>
-
-  <section id="findings">
-    <div class="section-eyebrow">Key Findings</div>
-    <h2>Where Ella Wins, Loses & Must Catch Up</h2>
-    <p class="section-intro">Testing revealed a clear pattern: Ella excels where local context matters, but stumbles on the "hygiene factors" that users consider table stakes.</p>
-    <div style="overflow-x:auto;">
-      <table class="comp-table">
-        <thead>
-          <tr><th>Feature Area</th><th class="th-ella">Ella</th><th>Bixby</th><th>Google</th><th>Siri</th><th>Verdict</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Entertainment</td><td class="col-ella winner">8.3</td><td>6.5</td><td>6.3</td><td>7.0</td><td class="winner">✅ Ella Wins</td></tr>
-          <tr><td>Travel & Navigation</td><td class="col-ella winner">8.0</td><td>6.9</td><td>7.2</td><td>7.2</td><td class="winner">✅ Ella Wins</td></tr>
-          <tr><td>Small Talk</td><td class="col-ella winner">7.1</td><td>6.7</td><td>6.2</td><td>6.1</td><td class="winner">✅ Ella Wins</td></tr>
-          <tr><td>Tools (Translation)</td><td class="col-ella winner">5.7</td><td>3.2</td><td>3.5</td><td>5.1</td><td class="winner">✅ Ella Wins</td></tr>
-          <tr><td>Information</td><td class="col-ella neutral-c">6.8</td><td>6.9</td><td>6.3</td><td>6.2</td><td class="neutral-c">≈ Competitive</td></tr>
-          <tr><td>Health</td><td class="col-ella neutral-c">4.4</td><td>5.1</td><td>4.6</td><td>4.8</td><td class="neutral-c">≈ All Weak</td></tr>
-          <tr><td>Communication</td><td class="col-ella loser">7.1</td><td>6.9</td><td>7.3</td><td>6.7</td><td class="loser">⚠️ Narrowly Behind</td></tr>
-          <tr><td>Voice Search</td><td class="col-ella loser">5.9</td><td>5.7</td><td>7.3</td><td>6.0</td><td class="loser">⚠️ Below Google</td></tr>
-          <tr><td>System Control</td><td class="col-ella loser">5.5</td><td>6.0</td><td>6.6</td><td>5.8</td><td class="loser">⚠️ Ella Behind</td></tr>
-          <tr><td><strong>Reminders / Calendar</strong></td><td class="col-ella loser"><strong>3.6</strong></td><td>3.2</td><td><strong>9.4</strong></td><td>3.2</td><td class="loser">🚨 Critical Gap</td></tr>
-          <tr style="background:var(--faint)"><td><strong>Feature Average</strong></td><td class="col-ella"><strong>6.1</strong></td><td><strong>6.3</strong></td><td><strong>6.5</strong></td><td><strong>5.9</strong></td><td></td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <hr class="divider" />
-    <h3 style="font-size:16px;font-weight:700;margin-bottom:20px;">Ella's Local Advantages in Detail</h3>
-    <div class="feature-grid" style="margin-bottom:32px;">
-      <div class="feature-card win"><div class="feature-icon">🎵</div><div class="feature-title">Entertainment (8.3 vs 5.9)</div><div class="feature-desc">Ella recognised "bongo music" and played specific tracks via Boom Play. 91.7% of users scored Ella higher. Competitors opened YouTube without playing or failed to identify the genre entirely.</div></div>
-      <div class="feature-card win"><div class="feature-icon">🗺️</div><div class="feature-title">Travel / Navigation (8.0 vs 6.8)</div><div class="feature-desc">Ella provided multi-modal directions (road, rail, air) for Nairobi–Mombasa. Bixby confused "Mombasa" with "Mumbai." 75% of users rated Ella higher for precise local navigation detail.</div></div>
-      <div class="feature-card win"><div class="feature-icon">💬</div><div class="feature-title">Small Talk (7.1 vs 5.7)</div><div class="feature-desc">83.3% of users preferred Ella's conversational engagement. Its responses felt less robotic — a key perception driver for continued adoption and daily habit formation.</div></div>
-      <div class="feature-card win"><div class="feature-icon">🌍</div><div class="feature-title">Translation (5.7 vs 3.9)</div><div class="feature-desc">Ella translates English → Swahili natively without redirecting to a third-party app. Bixby asked which translation app to open. Swahili→English bidirectionality remains a gap.</div></div>
-    </div>
-
-    <div class="callout red">
-      <div class="callout-icon">🚨</div>
-      <div class="callout-body">
-        <div class="callout-title">Critical Gap: Reminders & Calendar Integration — Ella: 3.6 vs Competitors: 8.6</div>
-        <div class="callout-text">100% of users rated competitors higher. Ella lacks deep OS integration and cannot set calendar events or system alarms — a "hygiene factor" expected by 41.7% of users as their most-used feature. When asked, Ella responded: <em>"Sorry, I don't know how to add an event to your calendar now."</em> This score is a measurable churn risk.</div>
-      </div>
-    </div>
-
-    <hr class="divider" />
-    <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;">Comprehensive UX Satisfaction Scores</h3>
-    <div style="overflow-x:auto;">
-      <table class="comp-table">
-        <thead>
-          <tr><th>UX Dimension</th><th class="th-ella">Ella</th><th>Bixby</th><th>Google</th><th>Siri</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Overall Satisfaction</td><td class="col-ella">6.9</td><td>6.8</td><td>8.0</td><td>7.3</td></tr>
-          <tr><td>Tone Satisfaction</td><td class="col-ella">7.3</td><td>7.8</td><td>8.5</td><td>6.8</td></tr>
-          <tr><td>Semantic Understanding</td><td class="col-ella winner">7.4</td><td>7.0</td><td>7.5</td><td>7.0</td></tr>
-          <tr><td>Feedback Accuracy</td><td class="col-ella">6.9</td><td>7.3</td><td>7.8</td><td>7.5</td></tr>
-          <tr><td>System Stability</td><td class="col-ella winner">8.6</td><td>8.0</td><td>9.3</td><td>8.3</td></tr>
-          <tr><td>Feature Richness</td><td class="col-ella">7.3</td><td>7.5</td><td>8.8</td><td>7.8</td></tr>
-          <tr><td>Interaction Fluency</td><td class="col-ella">7.6</td><td>8.3</td><td>8.5</td><td>7.8</td></tr>
-          <tr><td>Visual Aesthetics</td><td class="col-ella winner">7.9</td><td>7.5</td><td>7.3</td><td>6.8</td></tr>
-          <tr><td>Intelligence Perception</td><td class="col-ella">7.4</td><td>8.5</td><td>8.0</td><td>8.0</td></tr>
-          <tr><td>Interesting Perception</td><td class="col-ella winner">8.3</td><td>7.3</td><td>7.8</td><td>7.5</td></tr>
-          <tr style="background:var(--faint)"><td><strong>Overall Average</strong></td><td class="col-ella"><strong>7.6</strong></td><td><strong>7.6</strong></td><td><strong>8.1</strong></td><td><strong>7.5</strong></td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <hr class="divider" />
-    <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;">The Linguistic Challenge: Code-Switching</h3>
-    <div class="two-col" style="margin-bottom:24px;">
-      <div class="callout blue" style="margin-bottom:0"><div class="callout-icon">🇬🇧</div><div class="callout-body"><div class="callout-title">English — Utility (58.3%)</div><div class="callout-text">Preferred for reliability and global reach. Ella performs competitively. Google excels at narrating responses in natural English.</div></div></div>
-      <div class="callout gold" style="margin-bottom:0"><div class="callout-icon">🇰🇪</div><div class="callout-body"><div class="callout-title">Swahili / Native — Emotion (33.3%)</div><div class="callout-text">Users want seamless code-switching. Ella wins English→Swahili but struggles with Swahili→English — a strategic opportunity still open.</div></div></div>
-    </div>
-
-    <div class="quote-block"><div class="quote-text">Prefers both native language and English since it depicts the mood of the user at that time — the use of any language will project the information needed accurately.</div><div class="quote-attr">— Stanley, Research Participant</div></div>
-
-    <hr class="divider" />
-    <h3 style="font-size:16px;font-weight:700;margin-bottom:20px;">Ella's Competitive Profile</h3>
-    <div class="two-col">
-      <div>
-        <p style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:10px;">✅ Competitive Advantages</p>
-        <ul class="check-list">
-          <li>Recognises local music genres (bongo) via Boom Play</li><li>Detailed local navigation with multi-modal options</li><li>Engaging, human-like conversational small talk</li><li>Superior visual aesthetics & welcoming chat UI</li><li>Direct English → Swahili translation (no app switching)</li><li>Stable system performance (8.6 score)</li><li>High semantic understanding accuracy (7.4)</li>
-        </ul>
-      </div>
-      <div>
-        <p style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:10px;">⚠️ Gaps Requiring Action</p>
-        <ul class="check-list x-list">
-          <li>Cannot set calendar events or alarms (OS integration gap)</li><li>Information accuracy issues — retrieves outdated data</li><li>Unable to compose and send text messages</li><li>Lacks voice narration for all responses</li><li>Swahili → English translation fails</li><li>Chat responses disappear too quickly on screen</li><li>Voice tone sounds robotic to some users</li>
-        </ul>
-      </div>
-    </div>
-
-    <hr class="divider" />
-    <h3 style="font-size:16px;font-weight:700;margin-bottom:20px;">Voices from the Field</h3>
-    <div class="quote-block"><div class="quote-text">Ella retrieved detailed directions from Nairobi to Mombasa — distance, time, and means options like by road, rail, and air.</div><div class="quote-attr">— Alex, on Ella's navigation strength</div></div>
-    <div class="quote-block"><div class="quote-text">Ella really struggles to get commands right — it needs fine tuning and training in the local language like Kiswahili.</div><div class="quote-attr">— Julius, on Ella's language gap</div></div>
-    <div class="quote-block"><div class="quote-text">Ella was unable to compose and execute sending text. Google makes it easy to initiate calls and send text messages swiftly as requested.</div><div class="quote-attr">— Alex & Julius, on communication features</div></div>
-  </section>
-
-  <section id="strategy">
-    <div class="section-eyebrow">Strategic Recommendation</div>
-    <h2>Fix the Utility. Own the Culture.</h2>
-    <p class="section-intro">Ella cannot win on charm alone. The path forward is a three-tier strategy: fix the critical utility gaps first, then reinforce the cultural strengths that competitors cannot easily replicate.</p>
-    <div class="pyramid">
-      <div class="pyramid-tier t3"><div class="pyramid-icon">🚀</div><div><div>Expansion</div><div class="pyramid-sub">Interoperability with smart devices & health apps · Voice cloning / customisation</div></div></div>
-      <div class="pyramid-tier t2"><div class="pyramid-icon">🎵</div><div><div>Maintain the Lead</div><div class="pyramid-sub">Deepen local music & travel integrations · Build Swahili bidirectional support</div></div></div>
-      <div class="pyramid-tier t1"><div class="pyramid-icon">🗓️</div><div><div>Fix the Basics First</div><div class="pyramid-sub">Implement Calendar / Reminder APIs immediately — score 3.6 is a churn risk</div></div></div>
-    </div>
-
-    <hr class="divider" />
-    <h3 style="font-size:16px;font-weight:700;margin-bottom:20px;">Detailed Recommendations</h3>
-    <div class="rec-list">
-      <div class="rec-item"><div class="rec-num">1</div><div><div class="rec-title">Implement Calendar & Reminder OS Integration</div><div class="rec-desc">The #1 priority. Ella scored 3.6/10 on reminders — a feature 41.7% of users named as their favourite. Developing deep OS access to set alarms, calendar events, and reminders is non-negotiable for retention. This is a measurable churn risk.</div></div></div>
-      <div class="rec-item"><div class="rec-num">2</div><div><div class="rec-title">Fix Communication: Text Composition & Sending</div><div class="rec-desc">Ella currently cannot compose and send text messages — a basic expectation. 75% of users scored competitors higher on this. Ella must match Google and Bixby on this fundamental capability.</div></div></div>
-      <div class="rec-item"><div class="rec-num">3</div><div><div class="rec-title">Expand ASR Training for African-Accented English & Kiswahili</div><div class="rec-desc">Improve voice recognition for Kenyan phonological patterns and tonal variation. Add bidirectional Swahili ↔ English translation and broaden vocabulary for local terms, music genres, and place names. This is the core moat that global competitors cannot easily replicate.</div></div></div>
-      <div class="rec-item"><div class="rec-num">4</div><div><div class="rec-title">Add Voice Narration for All Responses</div><div class="rec-desc">Users find visual-only responses less satisfying in hands-free contexts like commuting. Implementing voice narration across all features is a key differentiator for Google and Bixby — and a current missing capability for Ella.</div></div></div>
-      <div class="rec-item"><div class="rec-num">5</div><div><div class="rec-title">Persist Chat History & Increase Response Display Duration</div><div class="rec-desc">Responses disappear when Ella returns to the home screen. Ella's chat-style UI is already preferred over Siri's transient interface — extending this to persistent history is a natural, high-value improvement.</div></div></div>
-      <div class="rec-item"><div class="rec-num">6</div><div><div class="rec-title">Build Interoperability & Smart Device Control</div><div class="rec-desc">Users requested connected device control, health app integration, voice cloning, and meeting note-taking. These form Ella's long-term expansion strategy — to be developed once baseline utility is secured.</div></div></div>
-    </div>
-
-    <hr class="divider" />
-    <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;">User Feature Wishlist (Ranked by Demand)</h3>
-    <div class="bar-list">
-      <div class="bar-row"><span class="bar-label">Calendar & Reminders</span><div class="bar-track"><div class="bar-fill o" style="width:50%"></div></div><span class="bar-val">50%</span></div>
-      <div class="bar-row"><span class="bar-label">Voice Cloning</span><div class="bar-track"><div class="bar-fill b" style="width:16.7%"></div></div><span class="bar-val">16.7%</span></div>
-      <div class="bar-row"><span class="bar-label">App Interoperability</span><div class="bar-track"><div class="bar-fill b" style="width:16.7%"></div></div><span class="bar-val">16.7%</span></div>
-      <div class="bar-row"><span class="bar-label">Meeting Notes / Recording</span><div class="bar-track"><div class="bar-fill g" style="width:8.3%"></div></div><span class="bar-val">8.3%</span></div>
-      <div class="bar-row"><span class="bar-label">New Information Source</span><div class="bar-track"><div class="bar-fill g" style="width:8.3%"></div></div><span class="bar-val">8.3%</span></div>
-    </div>
-  </section>
-
-  <section>
-    <div class="section-eyebrow">Reflection</div>
-    <h2>What This Research Taught Me</h2>
-    <p class="section-intro">Three lessons from this project that I carry into every engagement since.</p>
-    <div class="feature-grid">
-      <div class="feature-card neutral"><div class="feature-icon">🌍</div><div class="feature-title">Context is Everything</div><div class="feature-desc">A voice assistant isn't just a product — it's a cultural artefact. Ella's biggest wins came from understanding local music, geography, and language in ways Google simply didn't. Localisation is not a feature; it's a strategy.</div></div>
-      <div class="feature-card neutral"><div class="feature-icon">🧱</div><div class="feature-title">Fix the Floor Before the Ceiling</div><div class="feature-desc">Ella's charm and visual design were genuinely loved — but not enough to compensate for a broken reminder feature. Users tolerate delight deficits; they abandon utility deficits. Hygiene factors must come first.</div></div>
-      <div class="feature-card neutral"><div class="feature-icon">📊</div><div class="feature-title">Scores Need Stories</div><div class="feature-desc">The Reminders score of 3.6 was stark — but it was Stanley's quote that made the team act. Qualitative data is what turns numbers into decisions. Always pair the metrics with the moment.</div></div>
-    </div>
-  </section>
-
+<!-- STATS BAND -->
+<div class="stats-band fade-in">
+  <div class="stat">
+    <span class="stat-number">6.5</span>
+    <span class="stat-desc">Google Assistant top score (single satisfaction)</span>
+  </div>
+  <div class="stat">
+    <span class="stat-number">8.1</span>
+    <span class="stat-desc">Google comprehensive avg — highest overall</span>
+  </div>
+  <div class="stat">
+    <span class="stat-number">100%</span>
+    <span class="stat-desc">of users prefer competitors for reminders</span>
+  </div>
+  <div class="stat">
+    <span class="stat-number">91.7%</span>
+    <span class="stat-desc">rated Ella highest for entertainment</span>
+  </div>
 </div>
 
+<!-- ─── SECTION 1: PROBLEM ─── -->
+<section id="problem">
+  <p class="section-label">01 — Problem</p>
+  <div class="two-col fade-in">
+    <div>
+      <h2>What Problem Did This Research Address?</h2>
+      <p style="margin-bottom:1.5rem;">
+        Voice assistants have become integral to daily life for millions of users worldwide. Yet in East African markets like Kenya, little data exists on how locally-deployed or consumer-grade assistants — including the homegrown Ella and Folax — actually perform against global incumbents like Google Assistant, Siri, and Bixby.
+      </p>
+      <p>
+        Without evidence-backed satisfaction data, product teams cannot prioritize improvements that matter most to Kenyan users. This study was commissioned to close that gap: to assess user satisfaction across ten functional areas, surface competitive advantages and weaknesses, and gather candid user expectations for future development.
+      </p>
+    </div>
+    <div>
+      <h3>Research Objectives</h3>
+      <div class="challenges-list">
+        <div class="challenge-row">
+          <span class="challenge-name">User demographics — age, gender, occupation, education</span>
+        </div>
+        <div class="challenge-row">
+          <span class="challenge-name">Usage frequency, time of day, scenarios and functions</span>
+        </div>
+        <div class="challenge-row">
+          <span class="challenge-name">Overall satisfaction and loyalty with voice assistants</span>
+        </div>
+        <div class="challenge-row">
+          <span class="challenge-name">Feature-level satisfaction: tone, accuracy, fluency, aesthetics</span>
+        </div>
+        <div class="challenge-row">
+          <span class="challenge-name">Brand perception and competitive advantages</span>
+        </div>
+        <div class="challenge-row">
+          <span class="challenge-name">User demands and expectations for future development</span>
+        </div>
+      </div>
+
+      <!-- PERSONA CARD -->
+      <div class="persona-card" style="margin-top:2.5rem;">
+        <div class="persona-avatar" aria-label="User persona avatar">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="14" r="8" fill="white" opacity="0.8"/>
+            <path d="M4 36 C4 27 36 27 36 36" fill="white" opacity="0.6"/>
+          </svg>
+        </div>
+        <div class="persona-info">
+          <h3>Alex Muhia · Typical User Persona</h3>
+          <p>29-year-old Software Engineer · Single degree holder · Tecno Camon Premier · Uses Ella daily for navigation, calendar events, news and podcasts. Represents the dominant profile: young, educated, male daily user.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECTION 2: METHODS ─── -->
+<section id="methods" style="background: var(--surface);">
+  <p class="section-label">02 — Methods</p>
+  <div class="two-col fade-in">
+    <div>
+      <h2>How the Research Was Conducted</h2>
+      <p style="margin-bottom:1.5rem;">
+        The research methodology consisted of offline in-depth interviews. Twelve Kenyan daily voice assistant users were recruited and interviewed individually, having consented to participation. The sampling was stratified by age, gender, and location to ensure a representative sample.
+      </p>
+      <p style="margin-bottom:1.5rem;">
+        The questionnaire combined closed-ended and open-ended questions: closed questions captured demographics, usage patterns, and satisfaction ratings on a 1–10 scale; open questions collected qualitative insights on advantages, challenges, and improvement suggestions.
+      </p>
+      <p>
+        Two distinct comparison frameworks were used: a single satisfaction comparison rating across ten functional features, and a comprehensive satisfaction comparison across ten experiential dimensions, yielding a holistic picture of each assistant's strengths and weaknesses.
+      </p>
+    </div>
+    <div>
+      <h3>Participant Demographics</h3>
+      <div class="challenges-list">
+        <div class="challenge-row">
+          <span class="challenge-name">Aged 25–30 years</span>
+          <span class="challenge-pct" style="font-size:1rem;">66.7%</span>
+        </div>
+        <div class="challenge-row">
+          <span class="challenge-name">Aged 31–35 years</span>
+          <span class="challenge-pct" style="font-size:1rem;">25%</span>
+        </div>
+        <div class="challenge-row">
+          <span class="challenge-name">Male respondents</span>
+          <span class="challenge-pct" style="font-size:1rem;">66.7%</span>
+        </div>
+        <div class="challenge-row">
+          <span class="challenge-name">Female respondents</span>
+          <span class="challenge-pct" style="font-size:1rem;">33.3%</span>
+        </div>
+        <div class="challenge-row">
+          <span class="challenge-name">Single (marital status)</span>
+          <span class="challenge-pct" style="font-size:1rem;">75%</span>
+        </div>
+        <div class="challenge-row">
+          <span class="challenge-name">Degree holders</span>
+          <span class="challenge-pct" style="font-size:1rem;">91.7%</span>
+        </div>
+      </div>
+
+      <div class="icon-strip" style="margin-top:2.5rem;">
+        <div class="icon-block">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Offline interviews icon">
+            <rect x="4" y="8" width="28" height="20" rx="2" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+            <line x1="4" y1="14" x2="32" y2="14" stroke="currentColor" stroke-width="1.5" opacity="0.4"/>
+            <line x1="12" y1="8" x2="12" y2="28" stroke="currentColor" stroke-width="1.5" opacity="0.4"/>
+          </svg>
+          <span>Offline<br/>Interviews</span>
+        </div>
+        <div class="icon-block">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="12 participants icon">
+            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+            <circle cx="24" cy="12" r="5" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+            <path d="M4 28 C4 22 20 22 20 28" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.5" fill="none"/>
+            <path d="M16 28 C16 22 32 22 32 28" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.5" fill="none"/>
+          </svg>
+          <span>12<br/>Participants</span>
+        </div>
+        <div class="icon-block">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Rating scale 1-10 icon">
+            <rect x="4" y="20" width="5" height="12" rx="1" fill="currentColor" opacity="0.25"/>
+            <rect x="11" y="15" width="5" height="17" rx="1" fill="currentColor" opacity="0.35"/>
+            <rect x="18" y="10" width="5" height="22" rx="1" fill="currentColor" opacity="0.5"/>
+            <rect x="25" y="5" width="5" height="27" rx="1" fill="currentColor" opacity="0.65"/>
+          </svg>
+          <span>1–10<br/>Rating Scale</span>
+        </div>
+        <div class="icon-block">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="5 voice assistants tested icon">
+            <circle cx="18" cy="18" r="14" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+            <circle cx="18" cy="18" r="8" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
+            <circle cx="18" cy="18" r="3" fill="currentColor" opacity="0.5"/>
+          </svg>
+          <span>5 Voice<br/>Assistants</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECTION 3: FINDINGS ─── -->
+<section id="findings">
+  <p class="section-label">03 — Findings</p>
+  <h2 class="fade-in">Feature-by-Feature Performance Results</h2>
+
+  <!-- SINGLE SATISFACTION SCORES TABLE -->
+  <div class="fade-in" style="margin-bottom:4rem;">
+    <h3 style="margin-bottom:1rem;">Single Satisfaction Comparison — Feature Scores (out of 10)</h3>
+    <p style="margin-bottom:1.5rem; max-width:700px;">The table below reflects average user ratings across ten functional categories. Google Assistant led with a composite average of 6.5, followed by Bixby (6.3), Ella (6.2), and Siri (5.9).</p>
+    <div style="overflow-x:auto;">
+      <table class="score-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Ella</th>
+            <th>Bixby</th>
+            <th>Google</th>
+            <th>Siri</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Communication (calling, texting)</td>
+            <td class="score-cell score-mid">7.2</td>
+            <td class="score-cell score-mid">6.9</td>
+            <td class="score-cell score-best">7.3</td>
+            <td class="score-cell score-low">6.0*</td>
+          </tr>
+          <tr>
+            <td>Entertainment (music, video)</td>
+            <td class="score-cell score-best">7.0</td>
+            <td class="score-cell score-mid">8.3</td>
+            <td class="score-cell score-low">6.3</td>
+            <td class="score-cell score-low">7.0*</td>
+          </tr>
+          <tr>
+            <td>Information (weather, news, football)</td>
+            <td class="score-cell score-best">6.5</td>
+            <td class="score-cell score-mid">6.9</td>
+            <td class="score-cell score-low">6.3</td>
+            <td class="score-cell score-low">6.0*</td>
+          </tr>
+          <tr>
+            <td>Voice Search (Q &amp; A)</td>
+            <td class="score-cell score-low">6.3</td>
+            <td class="score-cell score-low">5.7</td>
+            <td class="score-cell score-best">7.3</td>
+            <td class="score-cell score-low">—</td>
+          </tr>
+          <tr>
+            <td>Small Talk (chat, jokes)</td>
+            <td class="score-cell score-best">5.8</td>
+            <td class="score-cell score-mid">6.7</td>
+            <td class="score-cell score-mid">6.2</td>
+            <td class="score-cell score-low">6.0*</td>
+          </tr>
+          <tr>
+            <td>Tools (translation)</td>
+            <td class="score-cell score-best">4.7</td>
+            <td class="score-cell score-low">5.8</td>
+            <td class="score-cell score-low">3.5</td>
+            <td class="score-cell score-low">5.0*</td>
+          </tr>
+          <tr>
+            <td>Reminders (flights, alarms, calendar)</td>
+            <td class="score-cell score-low">5.9</td>
+            <td class="score-cell score-low">3.2</td>
+            <td class="score-cell score-best">9.4</td>
+            <td class="score-cell score-mid">3.0*</td>
+          </tr>
+          <tr>
+            <td>System (phone settings)</td>
+            <td class="score-cell score-low">6.1</td>
+            <td class="score-cell score-low">6.0</td>
+            <td class="score-cell score-best">6.6</td>
+            <td class="score-cell score-mid">5.0*</td>
+          </tr>
+          <tr>
+            <td>Travel (navigation, routes)</td>
+            <td class="score-cell score-best">7.5</td>
+            <td class="score-cell score-mid">8.3</td>
+            <td class="score-cell score-mid">7.2</td>
+            <td class="score-cell score-low">7.0*</td>
+          </tr>
+          <tr>
+            <td>Health (running, walking)</td>
+            <td class="score-cell score-low">4.5</td>
+            <td class="score-cell score-mid">5.1</td>
+            <td class="score-cell score-low">4.6</td>
+            <td class="score-cell score-mid">4.0*</td>
+          </tr>
+          <tr style="font-weight:600;">
+            <td><strong>Average of All Features</strong></td>
+            <td class="score-cell score-mid"><strong>6.1</strong></td>
+            <td class="score-cell score-mid"><strong>6.3</strong></td>
+            <td class="score-cell score-best"><strong>6.5</strong></td>
+            <td class="score-cell score-low"><strong>5.9</strong></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.65rem; margin-top:0.75rem; color:var(--muted);">* Siri column partially inferred from available bar chart data. Ratings on 1–10 scale.</p>
+    </div>
+  </div>
+
+  <!-- FEATURE FINDINGS CARDS -->
+  <div class="findings-grid fade-in">
+    <div class="finding-card accent-blue">
+      <span class="card-number">01</span>
+      <h3>Entertainment: Ella Leads by a Wide Margin</h3>
+      <p>91.7% of participants rated Ella higher than all competitors for playing music and video accurately and with a quick response time. Ella scored 8.3 average against 5.9 from competitors. Users noted Ella directly navigated to local Kenyan content including bongo music — a culturally specific edge competitors lacked.</p>
+    </div>
+    <div class="finding-card accent-orange">
+      <span class="card-number">02</span>
+      <h3>Reminders: Competitors Dominate Unanimously</h3>
+      <p>100% of all 12 users rated Google, Bixby &amp; Siri higher than Ella for setting reminders, alarms, and calendar events. Ella consistently responded "I don't know how to add an event to your calendar," scoring just 3.6 vs. competitors' 8.6. This was the most decisive performance gap in the entire study.</p>
+    </div>
+    <div class="finding-card accent-gold">
+      <span class="card-number">03</span>
+      <h3>Travel: Ella Excels at Navigation Detail</h3>
+      <p>75% of users scored Ella higher for giving precise, detailed location and route information. Ella retrieved multi-modal directions from Nairobi to Mombasa covering road, rail and air — while Bixby misidentified Mombasa as Mumbai. Ella scored 8.0 vs. competitors' 6.8 average.</p>
+    </div>
+    <div class="finding-card accent-blue">
+      <span class="card-number">04</span>
+      <h3>Small Talk: Ella Keeps Users Engaged</h3>
+      <p>83.3% of users rated Ella higher for initiating relevant chats and conversational engagement. Ella scored 7.1 vs. competitors' 5.7. One user noted Ella responded warmly: "Hello my friend, what can I do for you?" — reflecting a friendlier interaction style than the more transactional Google or Siri.</p>
+    </div>
+    <div class="finding-card accent-orange">
+      <span class="card-number">05</span>
+      <h3>Voice Search: Competitors Retrieve More Accurately</h3>
+      <p>66.7% of users rated competitors higher for voice search accuracy. Users reported Ella retrieved incorrect information about Kenya's current president — a significant trust issue for a core feature. Competitors like Bixby narrated results with additional context while Ella's results were imprecise on current events.</p>
+    </div>
+    <div class="finding-card accent-gold">
+      <span class="card-number">06</span>
+      <h3>Translation Tools: Ella Best for English-to-Swahili</h3>
+      <p>75% rated Ella higher for translation, translating words directly without routing to external apps. However, all three (Ella, Bixby, Siri) failed to translate from Swahili to English — only Google managed this reverse direction. Ella scored 5.7 vs. competitors' 3.9 for translation overall.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMPREHENSIVE SATISFACTION COMPARISON -->
+<section style="background: var(--surface);">
+  <p class="section-label">03B — Comprehensive Satisfaction</p>
+  <div class="two-col fade-in">
+    <div>
+      <h2>Comprehensive Satisfaction Scores</h2>
+      <p style="margin-bottom:1.5rem;">Across ten experiential dimensions, Google Assistant led with a comprehensive average of 8.1 — above Bixby and Ella (both 7.6) and Siri (7.5). This reflects Google's strength in accuracy, feature richness, and interaction fluency.</p>
+      <p style="margin-bottom:1.5rem;">Notably, Ella outperformed competitors in <strong style="color:var(--accent2);">System Stability (8.6)</strong>, <strong style="color:var(--accent2);">Visual Aesthetics (7.9)</strong>, and <strong style="color:var(--accent2);">Interesting Perception (8.3)</strong> — areas tied to design polish and personality.</p>
+      <p>Ella's weaknesses concentrated in Feedback Accuracy Rate (6.9 vs. 7.5) and Overall Satisfaction (6.9 vs. 7.3) — driven largely by the reminders failure and voice search inaccuracies.</p>
+
+      <!-- Quotes -->
+      <div class="quotes-stack" style="margin-top:2rem;">
+        <div class="quote-block">
+          <p>"Ella excels in its own features though information disappears when it goes back to the home screen."</p>
+          <span class="quote-author">— Alex, Software Engineer</span>
+        </div>
+        <div class="quote-block">
+          <p>"Ella really struggles to get commands right — needs fine tuning and training in the local language like Kiswahili."</p>
+          <span class="quote-author">— Julius, Survey Participant</span>
+        </div>
+        <div class="quote-block">
+          <p>"Ella is intelligent, good at capturing information — excels at understanding and giving feedback."</p>
+          <span class="quote-author">— Alex, Software Engineer</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3>Comprehensive Average Scores (out of 10)</h3>
+      <div class="chart-section">
+        <div class="bar-row">
+          <span class="bar-label">Google Asst.</span>
+          <div class="bar-track"><div class="bar-fill" style="width:81%; animation-delay:0.1s;"></div></div>
+          <span class="bar-pct">8.1</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Ella</span>
+          <div class="bar-track"><div class="bar-fill" style="width:76%; animation-delay:0.2s;"></div></div>
+          <span class="bar-pct">7.6</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Bixby</span>
+          <div class="bar-track"><div class="bar-fill" style="width:76%; animation-delay:0.25s;"></div></div>
+          <span class="bar-pct">7.6</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Siri</span>
+          <div class="bar-track"><div class="bar-fill" style="width:75%; animation-delay:0.3s;"></div></div>
+          <span class="bar-pct">7.5</span>
+        </div>
+      </div>
+
+      <h3 style="margin-top:2.5rem;">Ella's Standout Scores</h3>
+      <div class="chart-section">
+        <div class="bar-row">
+          <span class="bar-label">System Stability</span>
+          <div class="bar-track"><div class="bar-fill" style="width:86%; animation-delay:0.35s;"></div></div>
+          <span class="bar-pct">8.6</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Interesting Perc.</span>
+          <div class="bar-track"><div class="bar-fill" style="width:83%; animation-delay:0.4s;"></div></div>
+          <span class="bar-pct">8.3</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Visual Aesthetics</span>
+          <div class="bar-track"><div class="bar-fill" style="width:79%; animation-delay:0.45s;"></div></div>
+          <span class="bar-pct">7.9</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Interaction Fluency</span>
+          <div class="bar-track"><div class="bar-fill" style="width:76%; animation-delay:0.5s;"></div></div>
+          <span class="bar-pct">7.6</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Semantic Underst.</span>
+          <div class="bar-track"><div class="bar-fill" style="width:74%; animation-delay:0.55s;"></div></div>
+          <span class="bar-pct">7.4</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECTION 4: OUTCOMES ─── -->
+<section id="outcomes">
+  <p class="section-label">04 — Outcomes</p>
+  <h2 class="fade-in">Usage Behavior, Preferences &amp; User Voices</h2>
+
+  <div class="two-col fade-in" style="margin-bottom:5rem;">
+    <div>
+      <h3>How Often Users Interact Daily</h3>
+      <div class="chart-section">
+        <div class="bar-row">
+          <span class="bar-label">5+ times per day</span>
+          <div class="bar-track"><div class="bar-fill" style="width:100%; animation-delay:0.1s;"></div></div>
+          <span class="bar-pct">50%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Thrice per day</span>
+          <div class="bar-track"><div class="bar-fill" style="width:66.6%; animation-delay:0.2s;"></div></div>
+          <span class="bar-pct">33.3%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Once per day</span>
+          <div class="bar-track"><div class="bar-fill" style="width:33.3%; animation-delay:0.3s;"></div></div>
+          <span class="bar-pct">16.7%</span>
+        </div>
+      </div>
+
+      <h3 style="margin-top:2.5rem;">Time of Day Usage</h3>
+      <div class="chart-section">
+        <div class="bar-row">
+          <span class="bar-label">Morning &amp; Evening</span>
+          <div class="bar-track"><div class="bar-fill" style="width:100%; animation-delay:0.35s;"></div></div>
+          <span class="bar-pct">41.7%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Morning only</span>
+          <div class="bar-track"><div class="bar-fill" style="width:80%; animation-delay:0.4s;"></div></div>
+          <span class="bar-pct">33.3%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Noon only</span>
+          <div class="bar-track"><div class="bar-fill" style="width:40%; animation-delay:0.45s;"></div></div>
+          <span class="bar-pct">16.7%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Evening only</span>
+          <div class="bar-track"><div class="bar-fill" style="width:20%; animation-delay:0.5s;"></div></div>
+          <span class="bar-pct">8.3%</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Most-Used Features</h3>
+      <div class="chart-section">
+        <div class="bar-row">
+          <span class="bar-label">Information (weather/news)</span>
+          <div class="bar-track"><div class="bar-fill orange" style="width:100%; animation-delay:0.1s;"></div></div>
+          <span class="bar-pct" style="color:var(--accent3);">66.7%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Communication</span>
+          <div class="bar-track"><div class="bar-fill orange" style="width:87.5%; animation-delay:0.2s;"></div></div>
+          <span class="bar-pct" style="color:var(--accent3);">58.3%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Entertainment</span>
+          <div class="bar-track"><div class="bar-fill orange" style="width:62.5%; animation-delay:0.3s;"></div></div>
+          <span class="bar-pct" style="color:var(--accent3);">41.7%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Travel / Directions</span>
+          <div class="bar-track"><div class="bar-fill orange" style="width:50%; animation-delay:0.35s;"></div></div>
+          <span class="bar-pct" style="color:var(--accent3);">33.3%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Reminders</span>
+          <div class="bar-track"><div class="bar-fill orange" style="width:37.5%; animation-delay:0.4s;"></div></div>
+          <span class="bar-pct" style="color:var(--accent3);">25%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Voice Search</span>
+          <div class="bar-track"><div class="bar-fill orange" style="width:25%; animation-delay:0.45s;"></div></div>
+          <span class="bar-pct" style="color:var(--accent3);">16.7%</span>
+        </div>
+      </div>
+
+      <p style="margin-top:2rem;">50% of users use their assistant more than five times daily. Usage peaks during morning and evening commutes — primarily for calling clients, playing music, checking weather, and getting directions while on the road.</p>
+    </div>
+  </div>
+
+  <!-- USER VOICES -->
+  <h3 style="margin-bottom:1.5rem;">What Users Said</h3>
+  <div class="two-col fade-in">
+    <div class="quotes-stack">
+      <div class="quote-block">
+        <p>"Calendar is my favorite since it helps me in setting events, travels and gives me options for maps and directions."</p>
+        <span class="quote-author">— Stanley</span>
+      </div>
+      <div class="quote-block">
+        <p>"My favorite feature is the maps because I don't have to keep touching my phone to find directions when driving around."</p>
+        <span class="quote-author">— Esther</span>
+      </div>
+      <div class="quote-block">
+        <p>"Setting alarms, events and reminders are my favorite features because it is easy and gets my commands correctly."</p>
+        <span class="quote-author">— Julius</span>
+      </div>
+    </div>
+    <div class="quotes-stack">
+      <div class="quote-block">
+        <p>"I use my voice assistant mostly in the morning on the road, especially for calling clients."</p>
+        <span class="quote-author">— Mercy</span>
+      </div>
+      <div class="quote-block">
+        <p>"Ella is better in terms of welcoming a new user who can learn easily and understand a lot."</p>
+        <span class="quote-author">— Christine</span>
+      </div>
+      <div class="quote-block">
+        <p>"I love Ella for its capability of accurate execution and quick response to commands and specific details to questions."</p>
+        <span class="quote-author">— Joel</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECTION 5: IMPACT ─── -->
+<section id="impact" style="background: var(--surface);">
+  <p class="section-label">05 — Impact</p>
+  <h2 class="fade-in">Competitive Landscape &amp; Strategic Implications</h2>
+
+  <!-- STRENGTHS vs WEAKNESSES -->
+  <div class="findings-grid fade-in" style="margin-bottom:4rem;">
+    <div class="finding-card accent-blue">
+      <span class="card-number">✓</span>
+      <h3>Ella's Competitive Strengths</h3>
+      <p>Quick response time for request execution · Visually appealing and welcoming interface ideal for new users · Entertainment — specifically music and video accuracy using Boomplay · Travel navigation with precise multi-modal route detail · Human-like voice quality · Request-and-response text dialogue box · Strong semantic understanding (7.4 average) and system stability (8.6).</p>
+    </div>
+    <div class="finding-card accent-orange">
+      <span class="card-number">✗</span>
+      <h3>Ella's Critical Weakness Areas</h3>
+      <p>Inability to set calendar events and reminders (only 3.6 average) — a complete functional failure cited by 100% of users. Insufficient knowledge base with outdated information. Limited voice narration for results. Robotic voice quality in some responses. Tonal variation and accent challenges with Kenyan English and Kiswahili. Chat responses disappear quickly from screen.</p>
+    </div>
+    <div class="finding-card accent-gold">
+      <span class="card-number">G</span>
+      <h3>Google Assistant: Why It Leads</h3>
+      <p>Highest comprehensive average (8.1). Superior narration of search results with longer display time. Best reminders and calendar functionality (9.4). Strong texting and communication in English. Sets calendar events by asking follow-up questions ("what time?"). Multilingual search capability and proven accuracy for Kenyan context queries like politicians and current events.</p>
+    </div>
+    <div class="finding-card accent-blue">
+      <span class="card-number">B</span>
+      <h3>Bixby: Niche Strengths &amp; Gaps</h3>
+      <p>Excellent entertainment and travel navigation scores. Strong knowledgebase and collaboration app options. Straight-to-the-point with confirmation prompts before action. However, struggles with Swahili-to-English translation and Kenyan place names (confused Mombasa with Mumbai). Asks which app to use instead of translating directly — a friction point.</p>
+    </div>
+  </div>
+
+  <!-- RECOMMENDATIONS -->
+  <p class="section-label">05B — Recommendations</p>
+  <h2 class="fade-in">Five Strategic Priorities for Ella</h2>
+  <div class="recs-grid fade-in">
+    <div class="rec-card">
+      <span class="rec-num">01</span>
+      <h3>Fix Calendar &amp; Reminders</h3>
+      <p>The single highest-impact improvement: 100% of users rated competitors better for reminders. Building reliable calendar event creation and alarm-setting functionality is essential before addressing any other gap.</p>
+    </div>
+    <div class="rec-card">
+      <span class="rec-num">02</span>
+      <h3>Improve Voice Recognition Accuracy</h3>
+      <p>Train Ella to accurately recognize Kenyan English pronunciation, tonal variations, and Kiswahili commands. Users repeatedly cited accent mismatches and word-by-word letter recognition as disruptive to conversational flow.</p>
+    </div>
+    <div class="rec-card">
+      <span class="rec-num">03</span>
+      <h3>Upgrade Knowledge Base to Real-Time</h3>
+      <p>Users flagged outdated information as a trust-breaker — Ella retrieved incorrect data about Kenya's president. Integrating a real-time data source and improving information precision would directly boost voice search scores.</p>
+    </div>
+    <div class="rec-card">
+      <span class="rec-num">04</span>
+      <h3>Expand Feature Range &amp; Integrations</h3>
+      <p>Add interoperability with health monitoring devices, smart speakers, and third-party apps. Introduce meeting note-taking and voice cloning features. Keep response text on screen longer before disappearing — currently a usability irritant.</p>
+    </div>
+    <div class="rec-card">
+      <span class="rec-num">05</span>
+      <h3>Improve Context &amp; Multilingual Support</h3>
+      <p>Add Kiswahili as a fully supported language — including Swahili-to-English translation. Improve context-awareness so Ella can handle multi-request conversations and chain commands without losing context between responses.</p>
+    </div>
+    <div class="rec-card">
+      <span class="rec-num">06</span>
+      <h3>Leverage Existing Strengths in Marketing</h3>
+      <p>Ella's entertainment, travel navigation, small talk, visual aesthetics, and system stability scores are genuinely competitive. Communicate these differentiators to users — particularly Boomplay music integration and detailed navigation for Kenyan routes.</p>
+    </div>
+  </div>
+
+  <!-- CONCLUSION CALLOUT -->
+  <div class="conclusion" style="margin-top:4rem; padding:5rem 4rem; background: var(--bg);">
+    <div class="conclusion-bg"></div>
+    <p class="section-label" style="position:relative; z-index:1;">05C — Conclusion</p>
+    <h2 class="fade-in" style="position:relative; z-index:1; max-width:800px;">
+      Ella is competitive —<br/>but <em>reminders and accuracy</em><br/>are holding it back
+    </h2>
+    <div class="conclusion-body fade-in" style="position:relative; z-index:1;">
+      <p>
+        The survey revealed that Google Assistant held the highest satisfaction level (6.5 single satisfaction; 8.1 comprehensive average), followed closely by Bixby and Ella. Ella's overall position — competitive across entertainment, travel, small talk, and visual design — demonstrates genuine product strength in the Kenyan market. The top use cases of information, communication, entertainment, travel, and reminders align well with Ella's wins and losses: it performs where users explore, and stumbles where users rely on it most.
+      </p>
+      <p>
+        The path to becoming the preferred voice assistant in Kenya is achievable. The majority of weaknesses are functional gaps — not fundamental design failures. Users who scored Ella highly did so emphatically, citing quick response times, local cultural awareness (bongo music recognition, Nairobi route precision), and a welcoming personality. Addressing the reminders failure, improving information accuracy, and building Kiswahili support would fundamentally reshape Ella's competitive standing.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
 <footer>
-  <p>UX Case Study · Transsion (Caricare) · African Voice Assistant Research · 2023–2025</p>
-  <p style="margin-top:8px;"><a href="#">← Back to Portfolio</a></p>
+  <div>
+    <p class="f-label">Research Findings · Case Study</p>
+    <p class="f-title">Voice Assistants in Kenya — User Satisfaction Report</p>
+  </div>
+  <div style="text-align:right;">
+    <p class="f-label">© 2023 Joseph Juma · Lead AI Researcher · Transsion Holdings</p>
+    <p class="f-label" style="color: var(--text); margin-top:0.3rem;">12 Participants · April 2023 · Offline Interview Methodology</p>
+  </div>
 </footer>
 
+<!-- SCRIPTS -->
+<script>
+  // ── DARK/LIGHT TOGGLE ──
+  const btn = document.getElementById('themeBtn');
+  btn.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    btn.textContent = document.body.classList.contains('dark') ? '☾ Dark' : '☀ Light';
+  });
+
+  // ── INTERSECTION OBSERVER FOR FADE-INS ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        const bars = entry.target.querySelectorAll('.bar-fill');
+        bars.forEach(bar => {
+          bar.style.animationPlayState = 'running';
+        });
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.bar-fill').forEach(bar => {
+    bar.style.animationPlayState = 'paused';
+  });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Hero immediate reveal
+  setTimeout(() => {
+    document.querySelectorAll('.hero .fade-in').forEach(el => el.classList.add('visible'));
+  }, 100);
+</script>
 </body>
 </html>
