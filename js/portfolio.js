@@ -304,7 +304,79 @@ function initCounters() {
   });
 }
 
+/* ── Certificate thumbnails + lightbox ──────────────────────── */
+function initCertLightbox() {
+  const lightbox = document.getElementById('cert-lightbox');
+  if (!lightbox) return;
+
+  const iframe   = lightbox.querySelector('iframe');
+  const caption  = lightbox.querySelector('.cert-lightbox-caption');
+  const closeBtn = lightbox.querySelector('.cert-lightbox-close');
+  const cards    = document.querySelectorAll('.cert-card[data-pdf]');
+
+  /* ── 1. Lazy-load iframe thumbnails via IntersectionObserver ── */
+  const io = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+
+      const card        = entry.target;
+      const thumbIframe = card.querySelector('.cert-thumb-iframe[data-src]');
+      const wrapper     = card.querySelector('.cert-thumb-wrap');
+
+      if (thumbIframe) {
+        wrapper.classList.add('loading');
+
+        // Move data-src → src to trigger the browser's PDF renderer
+        thumbIframe.src = thumbIframe.dataset.src;
+        delete thumbIframe.dataset.src;
+
+        // Remove shimmer once the iframe reports it has loaded
+        thumbIframe.addEventListener('load', () => {
+          wrapper.classList.remove('loading');
+        }, { once: true });
+
+        // Fallback: remove shimmer after 6s in case load never fires
+        setTimeout(() => wrapper.classList.remove('loading'), 6000);
+      }
+
+      obs.unobserve(card);
+    });
+  }, { rootMargin: '300px' });  // pre-load 300px before entering viewport
+
+  cards.forEach(card => io.observe(card));
+
+  /* ── 2. Open lightbox on card click ───────────────────────── */
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      const pdfUrl = card.dataset.pdf;
+      if (!pdfUrl) return;
+      iframe.src = pdfUrl;
+      caption.textContent = card.dataset.caption || '';
+      lightbox.classList.add('open');
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  /* ── 3. Close lightbox ─────────────────────────────────────── */
+  const closeLightbox = () => {
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    iframe.src = '';
+    document.body.style.overflow = '';
+  };
+
+  closeBtn?.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', e => {
+    if (e.target === lightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
+  });
+}
+
 /* ── Init all modules ───────────────────────────────────────── */
+// ...existing code...
 document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
   initMobileMenu();
@@ -317,4 +389,6 @@ document.addEventListener('DOMContentLoaded', () => {
   generateContribGraph();
   initContactForm();
   initCounters();
+  initCertLightbox(); // Only initializes if cert lightbox elements are present
 });
+
