@@ -595,6 +595,7 @@ button, input, textarea, select { font: inherit; }
   border-top: 1px solid var(--clr-border);
   border-bottom: 1px solid var(--clr-border);
   padding: var(--sp-14) 0 var(--sp-14);
+  margin-top: 68px;
   overflow: hidden;
   display: flex;
   align-items: center;
